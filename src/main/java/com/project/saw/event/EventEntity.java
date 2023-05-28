@@ -1,6 +1,8 @@
-package com.project.saw.model;
+package com.project.saw.event;
 
 
+import com.project.saw.ticket.TicketEntity;
+import com.project.saw.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "events")
-public class Event {
+public class EventEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +34,11 @@ public class Event {
     private LocalDate endingDate;
     private String description;
 
-    @OneToOne(mappedBy = "event")
-    private User user;
+    @OneToOne(mappedBy = "eventEntity")
+    private UserEntity userEntity;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-    private Set<Ticket> tickets;
+    @OneToMany(mappedBy = "eventEntity")
+    private Set<TicketEntity> ticketEntities;
 
 
 

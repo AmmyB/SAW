@@ -1,6 +1,8 @@
-package com.project.saw.model;
+package com.project.saw.ticket;
 
 
+import com.project.saw.event.EventEntity;
+import com.project.saw.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tickets")
-public class Ticket {
+public class TicketEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +29,9 @@ public class Ticket {
     private LocalDateTime purchaseDate;
 
     @ManyToOne
-    private Event event;
+    private EventEntity eventEntity;
 
     @ManyToOne
-    private User user;
+    private UserEntity userEntity;
 
 }
