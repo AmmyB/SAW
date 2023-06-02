@@ -35,6 +35,6 @@ public class UserEntity {
     @OneToOne
     private EventEntity eventEntity;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userEntity")
     private Set<TicketEntity> ticketEntities;
 }

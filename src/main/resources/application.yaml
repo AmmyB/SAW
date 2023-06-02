@@ -3,3 +3,6 @@ spring:
     url: jdbc:mysql://localhost:3306/project_SAW?serverTimezone=Europe/Warsaw&createDatabaseIfNotExist=true
     password: root
     username: root
+  jpa:
+    hibernate:
+      ddl-auto: update
