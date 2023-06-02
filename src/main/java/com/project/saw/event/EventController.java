@@ -1,10 +1,9 @@
 package com.project.saw.event;
 
 
+import com.project.saw.dto.CreateEventRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +22,11 @@ class EventController {
     @GetMapping
     public List<EventEntity> getEventList(){
         return eventService.getAll();
+    }
+
+    @PostMapping
+    public void createEvent(@RequestBody CreateEventRequest createEventRequest){
+        log.info("Creating an event: {}", createEventRequest);
+        eventService.createEvent(createEventRequest);
     }
 }
