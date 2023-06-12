@@ -25,8 +25,9 @@ class EventController {
     }
 
     @PostMapping
-    public void createEvent(@RequestBody CreateEventRequest createEventRequest){
+    public EventEntity createEvent(@RequestBody CreateEventRequest createEventRequest){
         log.info("Creating an event: {}", createEventRequest);
-        eventService.createEvent(createEventRequest);
+      return eventService.createEvent(createEventRequest);
+
     }
 }

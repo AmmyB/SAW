@@ -21,7 +21,7 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    public void createEvent(CreateEventRequest request) {
+    public EventEntity createEvent(CreateEventRequest request) {
         EventEntity eventEntity = EventEntity.builder()
                 .title(request.getTitle())
                 .location(request.getLocation())
@@ -31,7 +31,7 @@ public class EventService {
                 .description(request.getDescription())
                 .build();
 
-        eventRepository.save(eventEntity);
+        return eventRepository.save(eventEntity);
     }
 
 }
