@@ -2,6 +2,7 @@ package com.project.saw.event;
 
 
 import com.project.saw.dto.CreateEventRequest;
+import com.project.saw.exception.DuplicateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private static final String DUPLICATE_ERROR_MESSAGE = "This event %s already exist";
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -22,6 +24,11 @@ public class EventService {
     }
 
     public EventEntity createEvent(CreateEventRequest request) {
+        eventRepository.findByTitle(request.getTitle())
+                .ifPresent(EventEntity -> {
+                    var error = String.format(DUPLICATE_ERROR_MESSAGE, request.getTitle());
+                    throw new DuplicateException(error);
+                });
         EventEntity eventEntity = EventEntity.builder()
                 .title(request.getTitle())
                 .location(request.getLocation())
@@ -33,5 +40,4 @@ public class EventService {
 
         return eventRepository.save(eventEntity);
     }
-
 }

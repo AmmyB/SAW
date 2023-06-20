@@ -1,16 +1,19 @@
 package com.project.saw.event;
 
 import com.project.saw.dto.CreateEventRequest;
+import com.project.saw.exception.DuplicateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +23,12 @@ class EventServiceTest {
 
     private EventRepository eventRepository;
     private EventService eventService;
+
+    private static final EventEntity event = new EventEntity(1L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
+            LocalDate.of(2023,10,1),LocalDate.of(2023,10, 8),
+            "W pierwszym tygodniu października, Unsound zaburzy więc stały, lokalny porządek miasta, organizując koncerty, całonocne imprezy klubowe, dyskusje i projekcje filmowe.",
+            null, null);
+
     @Captor
     ArgumentCaptor<EventEntity> eventEntityArgumentCaptor;
 
@@ -45,7 +54,8 @@ class EventServiceTest {
     @Test
     void given_repo_with_not_existing_event_when_add_new_event_then_event_should_be_created() {
         //given
-        CreateEventRequest request = new CreateEventRequest("test", "testLocation", 9.00, LocalDate.of(2001,1,2), LocalDate.of(2001,1,2),
+        CreateEventRequest request = new CreateEventRequest("test", "test location", 9.00,
+                LocalDate.of(2001,1,2), LocalDate.of(2001,1,2),
                 "Test description");
         //when
         var results = eventService.createEvent(request);
@@ -58,5 +68,22 @@ class EventServiceTest {
         Assertions.assertEquals(capturedParameter.getStartingDate(),request.getStartingDate());
         Assertions.assertEquals(capturedParameter.getEndingDate(),request.getEndingDate());
         Assertions.assertEquals(capturedParameter.getDescription(),request.getDescription());
+    }
+
+    @Test
+    void given_repo_with_existing_event_when_add_new_event_then_event_should_not_be_created() {
+        //given
+        Mockito.when(eventRepository.findByTitle(any())).thenReturn(Optional.of(event));
+        CreateEventRequest request = new CreateEventRequest("Unsound Festival 2023: WEEKLY PASS",
+                "test location", 1.00, LocalDate.of(2001,1,2),
+                LocalDate.of(2001,1,2), "Test description");
+        //when
+        var exception = Assertions.assertThrows(DuplicateException.class, () -> eventService.createEvent(request));
+        //then
+        Mockito.verify(eventRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("This event %s already exist", request.getTitle());
+        var actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
     }
 }
