@@ -38,4 +38,10 @@ class EventController {
         log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
         return eventService.updateEvent(eventId, updateEventRequest);
     }
+
+    @DeleteMapping("{eventId}")
+    public void deleteEvent(@PathVariable Long eventId){
+        log.info("Deleting an event with the id: {}", eventId);
+        eventService.delete(eventId);
+    }
 }

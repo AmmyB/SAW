@@ -50,11 +50,11 @@ public class EventService {
 
     public UpdateEventResponse updateEvent(Long eventId, UpdateEventRequest updateEventRequest) {
         EventEntity eventEntity = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId) );
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with id: " + eventId));
 
         var optional = Optional.ofNullable(updateEventRequest).isPresent();
 
-        if (optional){
+        if (optional) {
             eventEntity.setPrice(updateEventRequest.getPrice());
             eventEntity.setStartingDate(updateEventRequest.getStartingDate());
             eventEntity.setEndingDate(updateEventRequest.getEndingDate());
@@ -65,7 +65,7 @@ public class EventService {
         return eventToEventResponse(eventEntity);
     }
 
-    public UpdateEventResponse eventToEventResponse(EventEntity eventEntity){
+    public UpdateEventResponse eventToEventResponse(EventEntity eventEntity) {
         return new UpdateEventResponse(
                 eventEntity.getId(),
                 eventEntity.getTitle(),
@@ -76,5 +76,9 @@ public class EventService {
                 eventEntity.getDescription()
         );
 
+    }
+
+    public void delete(Long eventId) {
+        eventRepository.deleteById(eventId);
     }
 }
