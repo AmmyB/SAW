@@ -12,7 +12,6 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +55,7 @@ class EventServiceTest {
                 .toList();
         Mockito.when(eventRepository.findAll()).thenReturn(list);
         //when
-        var results = eventService.getAll();
+        var results = eventService.getEventList();
         //then
         Assertions.assertEquals(list, results);
 

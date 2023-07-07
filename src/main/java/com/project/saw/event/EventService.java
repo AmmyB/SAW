@@ -7,14 +7,12 @@ import com.project.saw.dto.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -29,7 +27,7 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public List<EventEntity> getAll() {
+    public List<EventEntity> getEventList() {
         return eventRepository.findAll().stream()
                 .sorted(Comparator.comparing(EventEntity::getStartingDate))
                 .filter(e -> e.getEndingDate().isAfter(LocalDate.now()))

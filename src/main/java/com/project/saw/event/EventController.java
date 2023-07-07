@@ -23,7 +23,7 @@ class EventController {
 
     @GetMapping
     public List<EventEntity> getEventList(){
-        return eventService.getAll();
+        return eventService.getEventList();
     }
 
     @PostMapping
