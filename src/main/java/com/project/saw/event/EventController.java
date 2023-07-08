@@ -44,4 +44,9 @@ class EventController {
         log.info("Deleting an event with the id: {}", eventId);
         eventService.delete(eventId);
     }
+
+    @GetMapping("/search")
+    public List<EventEntity> searchEvents(@RequestParam String query){
+        return eventService.searchEvents(query);
+    }
 }

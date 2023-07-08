@@ -85,4 +85,8 @@ public class EventService {
     public void delete(Long eventId) {
         eventRepository.deleteById(eventId);
     }
+
+    public List<EventEntity> searchEvents(String query){
+        return eventRepository.searchByTitleLikeIgnoreCase(query);
+    }
 }
