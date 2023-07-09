@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 interface EventRepository extends JpaRepository<EventEntity, Long> {
+
+
     Optional<EventEntity> findByTitle(String title);
 
     @Query("SELECT e FROM EventEntity e WHERE e.title LIKE %:query%")

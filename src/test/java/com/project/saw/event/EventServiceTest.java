@@ -130,4 +130,14 @@ class EventServiceTest {
         Mockito.verify(eventRepository, Mockito.times(1)).deleteById(eventEntity.getId());
         assertThat(eventRepository.findById(eventEntity.getId())).isEmpty();
     }
+
+    @Test
+    void given_a_query_about_event_title_when_call_search_method_with_the_query_then_search_method_in_repository_should_be_called() {
+        //given
+        String q = "te";
+        //when
+        var results = eventService.searchEvents(q);
+        //then
+        Mockito.verify(eventRepository, Mockito.times(1)).searchByTitleLikeIgnoreCase(q);
+    }
 }
