@@ -1,9 +1,9 @@
 package com.project.saw.event;
 
 
-import com.project.saw.dto.CreateEventRequest;
-import com.project.saw.dto.UpdateEventRequest;
-import com.project.saw.dto.UpdateEventResponse;
+import com.project.saw.dto.event.CreateEventRequest;
+import com.project.saw.dto.event.UpdateEventRequest;
+import com.project.saw.dto.event.UpdateEventResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,4 +49,5 @@ class EventController {
     public List<EventEntity> searchEvents(@RequestParam String query){
         return eventService.searchEvents(query);
     }
+
 }

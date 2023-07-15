@@ -1,9 +1,9 @@
 package com.project.saw.event;
 
 
-import com.project.saw.dto.CreateEventRequest;
-import com.project.saw.dto.UpdateEventRequest;
-import com.project.saw.dto.UpdateEventResponse;
+import com.project.saw.dto.event.CreateEventRequest;
+import com.project.saw.dto.event.UpdateEventRequest;
+import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private static final String DUPLICATE_ERROR_MESSAGE = "This event %s already exist";
+    private static final String DUPLICATE_EVENT_ERROR_MESSAGE = "This event %s already exist";
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -35,9 +35,9 @@ public class EventService {
     }
 
     public EventEntity createEvent(CreateEventRequest request) {
-        eventRepository.findByTitle(request.getTitle())
+        eventRepository.findByTitleIgnoreCase(request.getTitle())
                 .ifPresent(EventEntity -> {
-                    var error = String.format(DUPLICATE_ERROR_MESSAGE, request.getTitle());
+                    var error = String.format(DUPLICATE_EVENT_ERROR_MESSAGE, request.getTitle());
                     throw new DuplicateException(error);
                 });
         EventEntity eventEntity = EventEntity.builder()

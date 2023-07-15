@@ -12,7 +12,7 @@ import java.util.Optional;
 interface EventRepository extends JpaRepository<EventEntity, Long> {
 
 
-    Optional<EventEntity> findByTitle(String title);
+    Optional<EventEntity> findByTitleIgnoreCase(String title);
 
     @Query("SELECT e FROM EventEntity e WHERE e.title LIKE %:query%")
     List<EventEntity> searchByTitleLikeIgnoreCase (@Param("query") String query);

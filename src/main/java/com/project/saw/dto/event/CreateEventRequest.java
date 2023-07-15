@@ -1,4 +1,4 @@
-package com.project.saw.dto;
+package com.project.saw.dto.event;
 
 
 import lombok.AllArgsConstructor;

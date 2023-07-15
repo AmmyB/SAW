@@ -1,8 +1,8 @@
 package com.project.saw.event;
 
-import com.project.saw.dto.CreateEventRequest;
-import com.project.saw.dto.UpdateEventRequest;
-import com.project.saw.dto.UpdateEventResponse;
+import com.project.saw.dto.event.CreateEventRequest;
+import com.project.saw.dto.event.UpdateEventRequest;
+import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +83,7 @@ class EventServiceTest {
     @Test
     void given_repo_with_existing_event_when_add_new_event_then_event_should_not_be_created() {
         //given
-        Mockito.when(eventRepository.findByTitle(any())).thenReturn(Optional.of(event));
+        Mockito.when(eventRepository.findByTitleIgnoreCase(any())).thenReturn(Optional.of(event));
         CreateEventRequest request = new CreateEventRequest("Unsound Festival 2023: WEEKLY PASS",
                 "test location", 1.00, LocalDate.of(2001, 1, 2),
                 LocalDate.of(2001, 1, 2), "Test description");
