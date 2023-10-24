@@ -46,6 +46,7 @@ public class UserService implements UserDetailsService {
                 .userName(request.userName())
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
+                .userRole(UserRole.valueOf("PARTICIPANT"))
                 .build();
 
         return userRepository.save(userEntity);
