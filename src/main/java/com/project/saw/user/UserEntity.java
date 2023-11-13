@@ -30,7 +30,7 @@ public class UserEntity {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private UserRole userRole = UserRole.PARTICIPANT;
+    private UserRole userRole;
 
     @OneToOne
     private EventEntity eventEntity;

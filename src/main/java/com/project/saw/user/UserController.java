@@ -1,6 +1,7 @@
 package com.project.saw.user;
 
 import com.project.saw.dto.user.CreateUserRequest;
+import com.project.saw.dto.user.UserProjections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserEntity> getUserList() {
+    public List<UserProjections> getUserList() {
         return userService.getUserList();
     }
 
