@@ -2,6 +2,7 @@ package com.project.saw.user;
 
 import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
+import com.project.saw.exception.EmailExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,13 @@ public class UserController {
     }
 
     @PostMapping
-    public UserEntity createUser(@RequestBody CreateUserRequest createUserRequest) {
+    public UserEntity createUser(@RequestBody CreateUserRequest createUserRequest) throws EmailExistsException {
         log.info("Creating a new user: {}", createUserRequest);
         return userService.createUser(createUserRequest);
+    }
+    @DeleteMapping("{userId}")
+    public void deleteUser(@PathVariable Long userId){
+        log.info("Deleting a user with the id: {}", userId);
+        userService.delete(userId);
     }
 }
