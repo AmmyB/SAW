@@ -1,7 +1,7 @@
 package com.project.saw.user;
 
 import com.project.saw.exception.EmailExistsException;
-import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
+
 import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service

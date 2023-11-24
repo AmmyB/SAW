@@ -26,7 +26,7 @@ class EventServiceTest {
     private EventRepository eventRepository;
     private EventService eventService;
 
-    private static final EventEntity event = new EventEntity(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
+    private static final EventEntity EVENT = new EventEntity(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
             LocalDate.of(2023, 10, 1), LocalDate.of(2023, 10, 8),
             "W pierwszym tygodniu października, Unsound zaburzy więc stały, lokalny porządek miasta, organizując koncerty, całonocne imprezy klubowe, dyskusje i projekcje filmowe.",
             null, null);
@@ -45,7 +45,7 @@ class EventServiceTest {
     @Test
     void given_not_empty_list_when_fetch_the_list_then_events_list_should_be_returned() {
         //given
-        List<EventEntity> list = Stream.of(event, new EventEntity(5L, "testowy event", "Warszawa", 10.00,
+        List<EventEntity> list = Stream.of(EVENT, new EventEntity(5L, "testowy event", "Warszawa", 10.00,
                         LocalDate.of(2023, 9, 24), LocalDate.of(2023, 9, 24),
                         "test test",
                         null, null))
@@ -83,7 +83,7 @@ class EventServiceTest {
     @Test
     void given_repo_with_existing_event_when_add_new_event_then_event_should_not_be_created() {
         //given
-        Mockito.when(eventRepository.findByTitleIgnoreCase(any())).thenReturn(Optional.of(event));
+        Mockito.when(eventRepository.findByTitleIgnoreCase(any())).thenReturn(Optional.of(EVENT));
         CreateEventRequest request = new CreateEventRequest("Unsound Festival 2023: WEEKLY PASS",
                 "test location", 1.00, LocalDate.of(2001, 1, 2),
                 LocalDate.of(2001, 1, 2), "Test description");
@@ -100,11 +100,11 @@ class EventServiceTest {
     @Test
     void given_existing_event_when_add_other_details_about_the_event_with_given_id_then_event_should_be_updated() {
         //given
-        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event));
-        Mockito.when(eventRepository.save(any())).thenReturn(event);
+        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(EVENT));
+        Mockito.when(eventRepository.save(any())).thenReturn(EVENT);
         UpdateEventRequest request = new UpdateEventRequest(150.00, LocalDate.of(2001, 1, 2),
                 LocalDate.of(2001, 1, 3), "Test description");
-        UpdateEventResponse response = new UpdateEventResponse(event.getId(), event.getTitle(), event.getLocation(),
+        UpdateEventResponse response = new UpdateEventResponse(EVENT.getId(), EVENT.getTitle(), EVENT.getLocation(),
                 request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getDescription());
         //when
         var results = eventService.updateEvent(4L, request);
