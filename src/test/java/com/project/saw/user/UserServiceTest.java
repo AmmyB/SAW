@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -110,5 +110,14 @@ class UserServiceTest {
         Assertions.assertEquals(expectedMessage,actualMessage);
     }
 
-
+    @Test
+    void given_user_with_the_id_when_call_delete_method_with_the_id_then_user_should_be_deleted() {
+        //given
+        UserEntity userEntity = new UserEntity(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        //when
+        userService.delete(userEntity.getId());
+        //then
+        Mockito.verify(userRepository, Mockito.times(1)).deleteById(userEntity.getId());
+        assertThat(userRepository.findById(userEntity.getId())).isEmpty();
+    }
 }
