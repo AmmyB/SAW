@@ -5,9 +5,15 @@ import com.project.saw.dto.event.CreateEventRequest;
 import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 
 @Slf4j
@@ -22,8 +28,11 @@ class EventController {
     }
 
     @GetMapping
-    public List<EventEntity> getEventList(){
-        return eventService.getEventList();
+    public CollectionModel<EventEntity> getEventList(){
+        List<EventEntity> allEvent = eventService.getEventList();
+        allEvent.forEach(eventEntity -> eventEntity.add(linkTo(EventController.class).slash(eventEntity.getId()).withSelfRel()));
+        Link link = linkTo(EventController.class).withSelfRel();
+        return CollectionModel.of(allEvent,link);
     }
 
     @PostMapping

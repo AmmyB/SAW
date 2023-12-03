@@ -4,9 +4,13 @@ import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
 import com.project.saw.exception.EmailExistsException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.util.ResourceSet;
+import org.springframework.hateoas.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Slf4j
 @RestController

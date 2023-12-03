@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Set;
-
+import org.springframework.hateoas.*;
 
 @Data
 @Entity
@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "events")
-public class EventEntity {
+public class EventEntity extends RepresentationModel<EventEntity>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
