@@ -2,6 +2,7 @@ package com.project.saw.user;
 
 import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
+import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.EmailExistsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,9 @@ class UserServiceTest {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
+
+    public static final UserEntity USER = new UserEntity(7L, "staticUser",
+            "Yyy47%", "yxq14@tr.pl", UserRole.PARTICIPANT, null, null);
 
     @Captor
     ArgumentCaptor<UserEntity> userEntityArgumentCaptor;
@@ -76,6 +80,34 @@ class UserServiceTest {
         Assertions.assertEquals(result.getUserName(), request.userName());
 
 
+    }
+
+    @Test
+    void given_repo_with_existing_username_when_add_new_user_then_throws_exception() throws EmailExistsException {
+        //given
+        Mockito.when(userRepository.findByUserNameIgnoreCase(any())).thenReturn(Optional.of(USER));
+        CreateUserRequest request = new CreateUserRequest("staticUser", "wrhge15", "qqq@q.pl");
+        //when
+        var exception = Assertions.assertThrows(DuplicateException.class, () -> userService.createUser(request));
+        //then
+        Mockito.verify(userRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("This user %s already exist", request.userName());
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    void given_user_with_existing_email_in_db_when_create_new_user_then_throws_exception() {
+        //given
+        Mockito.when(userRepository.findByEmail(any())).thenReturn(USER);
+        CreateUserRequest request = new CreateUserRequest("newUserTest", "wrhge15", "yxq14@tr.pl");
+        //when
+        var exception = Assertions.assertThrows(EmailExistsException.class, ()-> userService.createUser(request));
+        //then
+        Mockito.verify(userRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("There is an account with that email adress: " + request.email());
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage,actualMessage);
     }
 
 
