@@ -12,8 +12,9 @@ In the future:
 * :e-mail: **Messages** - Sending notifications
 * :closed_lock_with_key: **Login** - Logging in via social media
 * :credit_card: **Payments** - Adding test payments
-  <br />
-  The project allows event organizers to add, remove and edit event content and enables the user (participant) to sign up for events.
+  <br /><br />
+
+The project allows event organizers to add, remove and edit event content and enables the user (participant) to sign up for events.
 
 ## Authors
 
