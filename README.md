@@ -16,6 +16,11 @@ In the future:
 
 The project allows event organizers to add, remove and edit event content and enables the user (participant) to sign up for events.
 
+## Requirements
+
+**Java 11** or any higher version
+
+
 ## Authors
 
 - [@AmmyB](https://github.com/AmmyB)

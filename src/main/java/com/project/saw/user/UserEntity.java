@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "Users")
 public class UserEntity extends RepresentationModel<UserEntity> {
 
     @Id

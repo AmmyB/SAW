@@ -2,6 +2,7 @@ package com.project.saw.user;
 
 import com.project.saw.exception.EmailExistsException;
 
+import com.project.saw.exception.StringsExceptionMessage;
 import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
@@ -28,9 +29,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
 
-    private static final String DUPLICATE_USER_ERROR_MESSAGE = "This user %s already exist";
-
-
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,12 +42,12 @@ public class UserService implements UserDetailsService {
     public UserEntity createUser(CreateUserRequest request) throws EmailExistsException {
         userRepository.findByUserNameIgnoreCase(request.userName())
                 .ifPresent(UserEntity -> {
-                    var error = String.format(DUPLICATE_USER_ERROR_MESSAGE, request.userName());
+                    var error = String.format(StringsExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
                     throw new DuplicateException(error);
                 });
         if (emailExists(request.email())) {
             throw new EmailExistsException
-                    ("There is an account with that email adress: " + request.email());
+                    (StringsExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
         }
 
         UserEntity userEntity = UserEntity.builder()
