@@ -8,6 +8,7 @@ import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.StringsExceptionMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,9 +32,8 @@ public class EventService {
     }
 
     public List<EventEntity> getEventList() {
-        return eventRepository.findAll().stream()
-                .sorted(Comparator.comparing(EventEntity::getStartingDate))
-                .filter(e -> e.getEndingDate().isAfter(LocalDate.now()))
+        return eventRepository.sortedListOfEvents(Sort.by("startingDate")).stream()
+                .filter(event -> event.getEndingDate().isAfter(LocalDate.now()))
                 .toList();
     }
 
