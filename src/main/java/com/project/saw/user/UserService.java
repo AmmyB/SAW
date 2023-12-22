@@ -2,7 +2,7 @@ package com.project.saw.user;
 
 import com.project.saw.exception.EmailExistsException;
 
-import com.project.saw.exception.StringsExceptionMessage;
+import com.project.saw.exception.ExceptionMessage;
 import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,12 +41,12 @@ public class UserService implements UserDetailsService {
     public UserEntity createUser(CreateUserRequest request) throws EmailExistsException {
         userRepository.findByUserNameIgnoreCase(request.userName())
                 .ifPresent(UserEntity -> {
-                    var error = String.format(StringsExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
+                    var error = String.format(ExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
                     throw new DuplicateException(error);
                 });
         if (emailExists(request.email())) {
             throw new EmailExistsException
-                    (StringsExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
+                    (ExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
         }
 
         UserEntity userEntity = UserEntity.builder()

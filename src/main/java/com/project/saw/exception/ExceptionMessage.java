@@ -1,6 +1,6 @@
 package com.project.saw.exception;
 
-public class StringsExceptionMessage {
+public class ExceptionMessage {
     public static final String DUPLICATE_EVENT_ERROR_MESSAGE = "This event %s already exist";
 
     public static final String EVEN_NOT_FOUND_ERROR_MESSAGE = "Event not found with id: ";
