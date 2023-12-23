@@ -4,6 +4,10 @@ package com.project.saw.event;
 import com.project.saw.ticket.TicketEntity;
 import com.project.saw.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,13 +30,19 @@ public class EventEntity extends RepresentationModel<EventEntity>{
     private Long id;
 
     @Column(unique = true)
+    @NotBlank(message = "Title is mandatory")
     private String title;
+    @NotBlank(message = "Location is mandatory")
     private String location;
+    @NotNull(message = "Price is mandatory")
     private Double price;
     @Column(name = "starting_date")
+    @FutureOrPresent(message = "Starting date should be future or present")
     private LocalDate startingDate;
     @Column(name = "ending_date")
+    @Future(message = "Ending date should be future")
     private LocalDate endingDate;
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
     @OneToOne(mappedBy = "eventEntity")
