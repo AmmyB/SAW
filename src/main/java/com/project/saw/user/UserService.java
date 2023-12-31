@@ -3,6 +3,7 @@ package com.project.saw.user;
 import com.project.saw.exception.EmailExistsException;
 
 import com.project.saw.exception.ExceptionMessage;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
@@ -44,7 +45,7 @@ public class UserService implements UserDetailsService {
                     var error = String.format(ExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
                     throw new DuplicateException(error);
                 });
-        if (emailExists(request.email())) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailExistsException
                     (ExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
         }
@@ -59,11 +60,6 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userEntity);
     }
 
-    private boolean emailExists(final String email) {
-        return userRepository.findByEmail(email) != null;
-    }
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUserNameIgnoreCase(username)
@@ -74,6 +70,9 @@ public class UserService implements UserDetailsService {
     }
 
     public void delete(Long userId) {
-        userRepository.deleteById(userId);
+       UserEntity userToDelete = userRepository.findById(userId)
+               .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE + userId));
+       userRepository.delete(userToDelete);
+
     }
 }

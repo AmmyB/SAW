@@ -23,7 +23,7 @@ public class ExceptionController {
     public ResponseEntity<Object> handle(MethodArgumentNotValidException manve, WebRequest request){
         String customException = manve.getBindingResult().getFieldErrors().stream()
                 .map(x -> x.getField() + " - " + x.getDefaultMessage())
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(", "));
         return  ResponseEntity.badRequest().body(customException);
     }
 

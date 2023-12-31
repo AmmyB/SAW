@@ -99,7 +99,7 @@ class UserServiceTest {
     @Test
     void given_user_with_existing_email_in_db_when_create_new_user_then_throws_exception() {
         //given
-        Mockito.when(userRepository.findByEmail(any())).thenReturn(USER);
+        Mockito.when(userRepository.findByEmail(any())).thenReturn(Optional.of(USER));
         CreateUserRequest request = new CreateUserRequest("newUserTest", "wrhge15", "yxq14@tr.pl");
         //when
         var exception = Assertions.assertThrows(EmailExistsException.class, ()-> userService.createUser(request));

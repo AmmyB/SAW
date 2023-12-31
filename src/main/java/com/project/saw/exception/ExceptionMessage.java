@@ -9,4 +9,6 @@ public class ExceptionMessage {
 
     public static final String EMAIL_EXISTS_ERROR_MESSAGE = "There is an account with that email adress: ";
 
+    public static final String USER_NOT_FOUND_EXCEPTION_MESSAGE = "User not found with id: ";
+
 }
