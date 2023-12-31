@@ -26,18 +26,18 @@ class EventServiceTest {
     private EventRepository eventRepository;
     private EventService eventService;
 
-    private static final EventEntity EVENT = new EventEntity(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
+    private static final Event EVENT = new Event(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
             LocalDate.of(2023, 10, 1), LocalDate.of(2023, 10, 8),
             "W pierwszym tygodniu października, Unsound zaburzy więc stały, lokalny porządek miasta, organizując koncerty, całonocne imprezy klubowe, dyskusje i projekcje filmowe.",
             null, null);
 
 
     @Captor
-    ArgumentCaptor<EventEntity> eventEntityArgumentCaptor;
+    ArgumentCaptor<Event> eventEntityArgumentCaptor;
 
     @BeforeEach
     void setUp() {
-        eventEntityArgumentCaptor = ArgumentCaptor.forClass(EventEntity.class);
+        eventEntityArgumentCaptor = ArgumentCaptor.forClass(Event.class);
         eventRepository = Mockito.mock(EventRepository.class);
         eventService = new EventService(eventRepository);
     }
@@ -45,11 +45,11 @@ class EventServiceTest {
     @Test
     void given_not_empty_list_when_fetch_the_list_then_events_list_should_be_returned() {
         //given
-        List<EventEntity> list = Stream.of(EVENT, new EventEntity(5L, "testowy event", "Warszawa", 10.00,
+        List<Event> list = Stream.of(EVENT, new Event(5L, "testowy event", "Warszawa", 10.00,
                         LocalDate.of(2023, 9, 24), LocalDate.of(2023, 9, 24),
                         "test test",
                         null, null))
-                .sorted(Comparator.comparing(EventEntity::getStartingDate))
+                .sorted(Comparator.comparing(Event::getStartingDate))
                 .filter(e -> e.getEndingDate()
                         .isAfter(LocalDate.now()))
                 .toList();
@@ -122,7 +122,7 @@ class EventServiceTest {
     @Test
     void given_an_event_with_the_id_when_call_delete_method_with_the_id_then_event_should_be_deleted() {
         //given
-        EventEntity eventEntity = new EventEntity(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
+        Event eventEntity = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
                 LocalDate.of(2005, 5, 6), "Test description", null, null);
         //when
         eventService.delete(eventEntity.getId());

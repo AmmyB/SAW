@@ -8,10 +8,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -29,15 +27,15 @@ class EventController {
     }
 
     @GetMapping
-    public CollectionModel<EventEntity> getEventList() {
-        List<EventEntity> allEvent = eventService.getEventList();
+    public CollectionModel<Event> getEventList() {
+        List<Event> allEvent = eventService.getEventList();
         allEvent.forEach(eventEntity -> eventEntity.add(linkTo(EventController.class).slash(eventEntity.getId()).withSelfRel()));
         Link link = linkTo(EventController.class).withSelfRel();
         return CollectionModel.of(allEvent, link);
     }
 
     @PostMapping
-    public EventEntity createEvent(@RequestBody @Valid CreateEventRequest createEventRequest) {
+    public Event createEvent(@RequestBody @Valid CreateEventRequest createEventRequest) {
         log.info("Creating an event: {}", createEventRequest);
         return eventService.createEvent(createEventRequest);
 
@@ -56,7 +54,7 @@ class EventController {
     }
 
     @GetMapping("/search")
-    public List<EventEntity> searchEvents(@RequestParam String query) {
+    public List<Event> searchEvents(@RequestParam String query) {
         return eventService.searchEvents(query);
     }
 

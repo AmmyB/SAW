@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-interface UserRepository extends JpaRepository<UserEntity, Long> {
+interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<UserEntity> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
-    Optional<UserEntity> findByUserNameIgnoreCase(String userName);
+    Optional<User> findByUserNameIgnoreCase(String userName);
 
-    @Query("SELECT u FROM UserEntity u")
+    @Query("SELECT u FROM User u")
     List<UserProjections> listOfUsers (Sort sort);
 }

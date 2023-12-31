@@ -1,12 +1,11 @@
 package com.project.saw.user;
 
 
-import com.project.saw.event.EventEntity;
+import com.project.saw.event.Event;
 import com.project.saw.ticket.TicketEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Users")
-public class UserEntity extends RepresentationModel<UserEntity> {
+public class User extends RepresentationModel<User> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +41,7 @@ public class UserEntity extends RepresentationModel<UserEntity> {
     private UserRole userRole;
 
     @OneToOne
-    private EventEntity eventEntity;
+    private Event eventEntity;
 
     @OneToMany(mappedBy = "userEntity")
     private Set<TicketEntity> ticketEntities;

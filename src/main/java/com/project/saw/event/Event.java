@@ -2,7 +2,7 @@ package com.project.saw.event;
 
 
 import com.project.saw.ticket.TicketEntity;
-import com.project.saw.user.UserEntity;
+import com.project.saw.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -23,7 +23,7 @@ import org.springframework.hateoas.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Events")
-public class EventEntity extends RepresentationModel<EventEntity>{
+public class Event extends RepresentationModel<Event>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +46,7 @@ public class EventEntity extends RepresentationModel<EventEntity>{
     private String description;
 
     @OneToOne(mappedBy = "eventEntity")
-    private UserEntity userEntity;
+    private User userEntity;
 
     @OneToMany(mappedBy = "eventEntity")
     private Set<TicketEntity> ticketEntities;

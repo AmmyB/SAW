@@ -1,8 +1,6 @@
 package com.project.saw.exception;
 
 
-import com.project.saw.event.EventEntity;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

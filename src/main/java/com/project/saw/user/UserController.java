@@ -5,8 +5,6 @@ import com.project.saw.dto.user.UserProjections;
 import com.project.saw.exception.EmailExistsException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.util.ResourceSet;
-import org.springframework.hateoas.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserEntity createUser(@RequestBody @Valid CreateUserRequest createUserRequest) throws EmailExistsException {
+    public User createUser(@RequestBody @Valid CreateUserRequest createUserRequest) throws EmailExistsException {
         log.info("Creating a new user: {}", createUserRequest);
         return userService.createUser(createUserRequest);
     }

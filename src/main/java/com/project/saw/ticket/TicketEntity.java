@@ -1,8 +1,8 @@
 package com.project.saw.ticket;
 
 
-import com.project.saw.event.EventEntity;
-import com.project.saw.user.UserEntity;
+import com.project.saw.event.Event;
+import com.project.saw.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,9 +29,9 @@ public class TicketEntity {
     private LocalDateTime purchaseDate;
 
     @ManyToOne
-    private EventEntity eventEntity;
+    private Event eventEntity;
 
     @ManyToOne
-    private UserEntity userEntity;
+    private User userEntity;
 
 }

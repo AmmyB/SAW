@@ -1,10 +1,9 @@
 package com.project.saw.dto.user;
 
 
-import com.project.saw.event.EventEntity;
+import com.project.saw.event.Event;
 import com.project.saw.ticket.TicketEntity;
 import com.project.saw.user.UserRole;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
@@ -18,7 +17,7 @@ public interface UserProjections {
 
     UserRole getUserRole();
 
-    EventEntity getEventEntity();
+    Event getEventEntity();
 
     Set<TicketEntity> getTicketEntities();
 
@@ -30,7 +29,7 @@ public interface UserProjections {
 
     void setUserRole(UserRole userRole);
 
-    void setEventEntity(EventEntity eventEntity);
+    void setEventEntity(Event eventEntity);
 
     void setTicketEntity(Set<TicketEntity> ticketEntities);
 

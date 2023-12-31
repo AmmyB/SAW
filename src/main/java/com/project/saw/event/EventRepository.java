@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-interface EventRepository extends JpaRepository<EventEntity, Long> {
+interface EventRepository extends JpaRepository<Event, Long> {
 
 
-    Optional<EventEntity> findByTitleIgnoreCase(String title);
+    Optional<Event> findByTitleIgnoreCase(String title);
 
-    @Query("SELECT e FROM EventEntity e WHERE e.title LIKE %:query%")
-    List<EventEntity> searchByTitleLikeIgnoreCase (@Param("query") String query);
+    @Query("SELECT e FROM Event e WHERE e.title LIKE %:query%")
+    List<Event> searchByTitleLikeIgnoreCase (@Param("query") String query);
 
-    @Query("SELECT e FROM EventEntity e")
-    List<EventEntity> sortedListOfEvents(Sort sort);
+    @Query("SELECT e FROM Event e")
+    List<Event> sortedListOfEvents(Sort sort);
 
 }

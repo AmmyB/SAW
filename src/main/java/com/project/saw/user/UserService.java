@@ -12,7 +12,6 @@ import com.project.saw.exception.DuplicateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +38,7 @@ public class UserService implements UserDetailsService {
         return userRepository.listOfUsers(Sort.by("id"));
     }
 
-    public UserEntity createUser(CreateUserRequest request) throws EmailExistsException {
+    public User createUser(CreateUserRequest request) throws EmailExistsException {
         userRepository.findByUserNameIgnoreCase(request.userName())
                 .ifPresent(UserEntity -> {
                     var error = String.format(ExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
@@ -50,7 +49,7 @@ public class UserService implements UserDetailsService {
                     (ExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
         }
 
-        UserEntity userEntity = UserEntity.builder()
+        User userEntity = User.builder()
                 .userName(request.userName())
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
@@ -64,13 +63,13 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUserNameIgnoreCase(username)
                 .map(user -> (
-                        new User(user.getUserName(), user.getPassword(), List.of(new SimpleGrantedAuthority(user.getUserRole().name())))
+                        new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), List.of(new SimpleGrantedAuthority(user.getUserRole().name())))
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     public void delete(Long userId) {
-       UserEntity userToDelete = userRepository.findById(userId)
+       User userToDelete = userRepository.findById(userId)
                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE + userId));
        userRepository.delete(userToDelete);
 

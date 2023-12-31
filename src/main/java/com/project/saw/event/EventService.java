@@ -28,19 +28,19 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public List<EventEntity> getEventList() {
+    public List<Event> getEventList() {
         return eventRepository.sortedListOfEvents(Sort.by("startingDate")).stream()
                 .filter(event -> event.getEndingDate().isAfter(LocalDate.now()))
                 .toList();
     }
 
-    public EventEntity createEvent(CreateEventRequest request) {
+    public Event createEvent(CreateEventRequest request) {
         eventRepository.findByTitleIgnoreCase(request.getTitle())
                 .ifPresent(EventEntity -> {
                     var error = String.format(ExceptionMessage.DUPLICATE_EVENT_ERROR_MESSAGE, request.getTitle());
                     throw new DuplicateException(error);
                 });
-        EventEntity eventEntity = EventEntity.builder()
+        Event eventEntity = Event.builder()
                 .title(request.getTitle())
                 .location(request.getLocation())
                 .price(request.getPrice())
@@ -53,7 +53,7 @@ public class EventService {
     }
 
     public UpdateEventResponse updateEvent(Long eventId, UpdateEventRequest updateEventRequest) {
-        EventEntity eventEntity = eventRepository.findById(eventId)
+        Event eventEntity = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
         var optional = Optional.ofNullable(updateEventRequest).isPresent();
@@ -69,7 +69,7 @@ public class EventService {
         return eventToEventResponse(eventEntity);
     }
 
-    private UpdateEventResponse eventToEventResponse(EventEntity eventEntity) {
+    private UpdateEventResponse eventToEventResponse(Event eventEntity) {
         return new UpdateEventResponse(
                 eventEntity.getId(),
                 eventEntity.getTitle(),
@@ -83,13 +83,13 @@ public class EventService {
     }
 
     public void delete(Long eventId) {
-        EventEntity eventToDelete = eventRepository.findById(eventId)
+        Event eventToDelete = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
         eventRepository.delete(eventToDelete);
 
     }
 
-    public List<EventEntity> searchEvents(String query) {
+    public List<Event> searchEvents(String query) {
         return eventRepository.searchByTitleLikeIgnoreCase(query);
     }
 }

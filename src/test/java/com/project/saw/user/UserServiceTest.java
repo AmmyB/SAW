@@ -29,18 +29,18 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
     private UserService userService;
 
-    public static final UserEntity USER = new UserEntity(7L, "staticUser",
+    public static final User USER = new User(7L, "staticUser",
             "Yyy47%", "yxq14@tr.pl", UserRole.PARTICIPANT, null, null);
 
     @Captor
-    ArgumentCaptor<UserEntity> userEntityArgumentCaptor;
+    ArgumentCaptor<User> userEntityArgumentCaptor;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
         userService = new UserService(userRepository, passwordEncoder);
-        userEntityArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
+        userEntityArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
     }
 
@@ -71,7 +71,7 @@ class UserServiceTest {
     void given_repo_with_not_existing_user_when_add_new_user_then_user_should_be_created() throws EmailExistsException {
         //given
         CreateUserRequest request = new CreateUserRequest("unitTest", "xxx4", "xyz@nq.pl");
-        UserEntity response = UserEntity.builder()
+        User response = User.builder()
                 .userName(request.userName()).build();
         Mockito.when(userRepository.save(any())).thenReturn(response);
         //when
@@ -113,7 +113,7 @@ class UserServiceTest {
     @Test
     void given_user_with_the_id_when_call_delete_method_with_the_id_then_user_should_be_deleted() {
         //given
-        UserEntity userEntity = new UserEntity(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        User userEntity = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
         //when
         userService.delete(userEntity.getId());
         //then
