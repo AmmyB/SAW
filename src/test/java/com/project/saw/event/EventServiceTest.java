@@ -4,6 +4,7 @@ import com.project.saw.dto.event.CreateEventRequest;
 import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,15 +121,30 @@ class EventServiceTest {
     }
 
     @Test
-    void given_an_event_with_the_id_when_call_delete_method_with_the_id_then_event_should_be_deleted() {
+    void given_existing_event_when_call_delete_method_with_event_id_then_event_should_be_deleted() {
         //given
-        Event eventEntity = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
+        Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
+                LocalDate.of(2005, 5, 6), "Test description", null, null);
+        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());
+        //when
+        eventService.delete(event.getId());
+        //then
+        Mockito.verify(eventRepository, Mockito.times(1)).delete(event);
+        assertThat(eventRepository.findById(event.getId()).isEmpty());
+    }
+
+    @Test
+    void given_not_existing_event_when_call_delete_method_with_not_existing_event_id_then_method_throws_exception() {
+        //given
+        Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
                 LocalDate.of(2005, 5, 6), "Test description", null, null);
         //when
-        eventService.delete(eventEntity.getId());
+        var exception = Assertions.assertThrows(EntityNotFoundException.class, ()->eventService.delete(event.getId()));
         //then
-        Mockito.verify(eventRepository, Mockito.times(1)).deleteById(eventEntity.getId());
-        assertThat(eventRepository.findById(eventEntity.getId())).isEmpty();
+        Mockito.verify(eventRepository, Mockito.never()).delete(any());
+        var expectedMessage =  String.format("Event not found with id: " +  event.getId());
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage,actualMessage);
     }
 
     @Test
