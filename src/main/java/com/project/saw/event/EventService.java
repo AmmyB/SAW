@@ -56,14 +56,11 @@ public class EventService {
         Event eventEntity = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
-        var optional = Optional.ofNullable(updateEventRequest).isPresent();
+        eventEntity.setPrice(updateEventRequest.getPrice());
+        eventEntity.setStartingDate(updateEventRequest.getStartingDate());
+        eventEntity.setEndingDate(updateEventRequest.getEndingDate());
+        eventEntity.setDescription(updateEventRequest.getDescription());
 
-        if (optional) {
-            eventEntity.setPrice(updateEventRequest.getPrice());
-            eventEntity.setStartingDate(updateEventRequest.getStartingDate());
-            eventEntity.setEndingDate(updateEventRequest.getEndingDate());
-            eventEntity.setDescription(updateEventRequest.getDescription());
-        }
         eventEntity = eventRepository.save(eventEntity);
 
         return eventToEventResponse(eventEntity);

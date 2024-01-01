@@ -121,6 +121,21 @@ class EventServiceTest {
     }
 
     @Test
+    void given_not_existing_event_when_add_other_details_about_the_event_with_given_id_then_method_should_throws_exception() {
+        //given
+        Long eventId = 4L;
+        UpdateEventRequest request = new UpdateEventRequest(150.00, LocalDate.of(2001, 1, 2),
+                LocalDate.of(2001, 1, 3), "Test description");
+        //when
+        var exception = Assertions.assertThrows(EntityNotFoundException.class, ()-> eventService.updateEvent(eventId,request));
+        //then
+        Mockito.verify(eventRepository, Mockito.never()).save(any());
+        var expectedMessage =  String.format("Event not found with id: " +  eventId);
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage,actualMessage);
+    }
+
+    @Test
     void given_existing_event_when_call_delete_method_with_event_id_then_event_should_be_deleted() {
         //given
         Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
