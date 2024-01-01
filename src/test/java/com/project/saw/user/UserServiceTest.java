@@ -2,8 +2,10 @@ package com.project.saw.user;
 
 import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
+import com.project.saw.event.Event;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.EmailExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -111,13 +114,27 @@ class UserServiceTest {
     }
 
     @Test
-    void given_user_with_the_id_when_call_delete_method_with_the_id_then_user_should_be_deleted() {
+    void given_existing_user_when_call_delete_method_with_user_id_then_user_should_be_deleted() {
         //given
-        User userEntity = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(user)).thenReturn(Optional.empty());
         //when
-        userService.delete(userEntity.getId());
+        userService.delete(user.getId());
         //then
-        Mockito.verify(userRepository, Mockito.times(1)).deleteById(userEntity.getId());
-        assertThat(userRepository.findById(userEntity.getId())).isEmpty();
+        Mockito.verify(userRepository, Mockito.times(1)).delete(user);
+        assertThat(userRepository.findById(user.getId()).isEmpty());
+    }
+
+    @Test
+    void given_not_existing_user_when_call_delete_method_with_not_existing_user_id_then_method_throws_exception() {
+        //given
+        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        //when
+        var exception = Assertions.assertThrows(EntityNotFoundException.class, ()->userService.delete(user.getId()));
+        //then
+        Mockito.verify(userRepository, Mockito.never()).delete(any());
+        var expectedMessage =  String.format("User not found with id: " +  user.getId());
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage,actualMessage);
     }
 }

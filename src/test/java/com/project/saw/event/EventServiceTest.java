@@ -44,7 +44,7 @@ class EventServiceTest {
     }
 
     @Test
-    void given_not_empty_list_when_fetch_the_list_then_events_list_should_be_returned() {
+    void given_not_empty_list_when_fetch_the_list_then_event_list_should_be_returned() {
         //given
         List<Event> list = Stream.of(EVENT, new Event(5L, "testowy event", "Warszawa", 10.00,
                         LocalDate.of(2023, 9, 24), LocalDate.of(2023, 9, 24),
