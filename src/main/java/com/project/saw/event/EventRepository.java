@@ -1,6 +1,5 @@
 package com.project.saw.event;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,9 +15,9 @@ interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByTitleIgnoreCase(String title);
 
     @Query("SELECT e FROM Event e WHERE e.title LIKE %:query%")
-    List<Event> searchByTitleLikeIgnoreCase (@Param("query") String query);
+    List<Event> searchByTitleLikeIgnoreCase(@Param("query") String query);
 
-    @Query("SELECT e FROM Event e")
-    List<Event> sortedListOfEvents(Sort sort);
+    @Query("SELECT e FROM Event e WHERE e.endingDate >= now() ORDER BY e.startingDate ASC")
+    List<Event> sortedListOfEvents();
 
 }

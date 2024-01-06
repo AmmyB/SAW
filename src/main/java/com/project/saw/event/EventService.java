@@ -2,11 +2,13 @@ package com.project.saw.event;
 
 
 import com.project.saw.dto.event.CreateEventRequest;
+import com.project.saw.dto.event.UpdateEvenMapper;
 import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.ExceptionMessage;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,24 +24,21 @@ import java.util.Optional;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UpdateEvenMapper updateEvenMapper;
 
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, UpdateEvenMapper updateEvenMapper) {
         this.eventRepository = eventRepository;
+        this.updateEvenMapper = updateEvenMapper;
     }
+
 
     public List<Event> getEventList() {
-        return eventRepository.sortedListOfEvents(Sort.by("startingDate")).stream()
-                .filter(event -> event.getEndingDate().isAfter(LocalDate.now()))
-                .toList();
+        return eventRepository.sortedListOfEvents();
     }
 
+    //TODO: rest controller advice
     public Event createEvent(CreateEventRequest request) {
-        eventRepository.findByTitleIgnoreCase(request.getTitle())
-                .ifPresent(EventEntity -> {
-                    var error = String.format(ExceptionMessage.DUPLICATE_EVENT_ERROR_MESSAGE, request.getTitle());
-                    throw new DuplicateException(error);
-                });
         Event eventEntity = Event.builder()
                 .title(request.getTitle())
                 .location(request.getLocation())
@@ -48,22 +47,21 @@ public class EventService {
                 .endingDate(request.getEndingDate())
                 .description(request.getDescription())
                 .build();
-
         return eventRepository.save(eventEntity);
     }
 
     public UpdateEventResponse updateEvent(Long eventId, UpdateEventRequest updateEventRequest) {
         Event eventEntity = eventRepository.findById(eventId)
+                .map(event -> setUpdateEvent(event, updateEventRequest))
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
-        eventEntity.setPrice(updateEventRequest.getPrice());
-        eventEntity.setStartingDate(updateEventRequest.getStartingDate());
-        eventEntity.setEndingDate(updateEventRequest.getEndingDate());
-        eventEntity.setDescription(updateEventRequest.getDescription());
-
-        eventEntity = eventRepository.save(eventEntity);
 
         return eventToEventResponse(eventEntity);
+    }
+    private Event setUpdateEvent(Event event,UpdateEventRequest request) {
+        updateEvenMapper.ToEntity(event,request);
+        return eventRepository.save(event);
+
     }
 
     private UpdateEventResponse eventToEventResponse(Event eventEntity) {

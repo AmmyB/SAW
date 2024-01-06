@@ -24,5 +24,5 @@ public class ExceptionController {
                 .collect(Collectors.joining(", "));
         return  ResponseEntity.badRequest().body(customException);
     }
-
+//TODO unique w entity
 }

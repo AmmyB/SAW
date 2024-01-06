@@ -8,11 +8,13 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @Slf4j
@@ -46,6 +48,15 @@ class EventController {
         log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
         return eventService.updateEvent(eventId, updateEventRequest);
     }
+
+//    @PatchMapping("{eventId}")
+//    public ResponseEntity<UpdateEventResponse> updateEvent(@PathVariable  Long eventId, @Valid @RequestBody UpdateEventRequest updateEventRequest) {
+//        log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
+//        UpdateEventResponse event = eventService.updateEvent(eventId, updateEventRequest);
+//       event.add(linkTo(EventController.class).slash(event.getId()).withSelfRel());
+//        Link link = linkTo(EventController.class).withSelfRel();
+//        return ResponseEntity<UpdateEventResponse>(event,link);
+//    }
 
     @DeleteMapping("{eventId}")
     public void deleteEvent(@PathVariable @Valid Long eventId) {

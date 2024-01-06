@@ -1,6 +1,5 @@
 package com.project.saw.user;
 
-import com.project.saw.exception.EmailExistsException;
 
 import com.project.saw.exception.ExceptionMessage;
 import jakarta.persistence.EntityNotFoundException;
@@ -8,7 +7,6 @@ import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
-import com.project.saw.exception.DuplicateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,16 +36,8 @@ public class UserService implements UserDetailsService {
         return userRepository.listOfUsers(Sort.by("id"));
     }
 
-    public User createUser(CreateUserRequest request) throws EmailExistsException {
-        userRepository.findByUserNameIgnoreCase(request.userName())
-                .ifPresent(UserEntity -> {
-                    var error = String.format(ExceptionMessage.DUPLICATE_USER_ERROR_MESSAGE, request.userName());
-                    throw new DuplicateException(error);
-                });
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new EmailExistsException
-                    (ExceptionMessage.EMAIL_EXISTS_ERROR_MESSAGE + request.email());
-        }
+//TODO: do zpłapania exception w entity
+    public User createUser(CreateUserRequest request) {
 
         User userEntity = User.builder()
                 .userName(request.userName())
@@ -67,7 +57,7 @@ public class UserService implements UserDetailsService {
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
-
+//TODO: transakcje
     public void delete(Long userId) {
        User userToDelete = userRepository.findById(userId)
                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE + userId));

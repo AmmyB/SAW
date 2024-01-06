@@ -27,13 +27,15 @@ public class User extends RepresentationModel<User> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name")
+
+    @Column(name = "user_name", unique = true)
     @NotBlank(message = "Username is mandatory")
     private String userName;
 
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+    @Column(unique = true)
     @Email(message = "Email should be valid")
     private String email;
 

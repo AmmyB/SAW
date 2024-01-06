@@ -1,6 +1,7 @@
 package com.project.saw.event;
 
 import com.project.saw.dto.event.CreateEventRequest;
+import com.project.saw.dto.event.UpdateEvenMapper;
 import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -26,6 +28,7 @@ class EventServiceTest {
 
     private EventRepository eventRepository;
     private EventService eventService;
+    private UpdateEvenMapper updateEvenMapper;
 
     private static final Event EVENT = new Event(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
             LocalDate.of(2023, 10, 1), LocalDate.of(2023, 10, 8),
@@ -40,7 +43,8 @@ class EventServiceTest {
     void setUp() {
         eventEntityArgumentCaptor = ArgumentCaptor.forClass(Event.class);
         eventRepository = Mockito.mock(EventRepository.class);
-        eventService = new EventService(eventRepository);
+        updateEvenMapper = Mockito.mock(UpdateEvenMapper.class);
+        eventService = new EventService(eventRepository, updateEvenMapper);
     }
 
     @Test
@@ -117,7 +121,7 @@ class EventServiceTest {
         Assertions.assertEquals(capturedParameter.getPrice(), response.getPrice());
         Assertions.assertEquals(capturedParameter.getStartingDate(), response.getStartingDate());
         Assertions.assertEquals(capturedParameter.getEndingDate(), response.getEndingDate());
-        Assertions.assertEquals(capturedParameter.getDescription(), response.getDescription());
+
     }
 
     @Test

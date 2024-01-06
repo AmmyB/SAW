@@ -1,6 +1,8 @@
 package com.project.saw.event;
 
 
+import com.project.saw.dto.event.UpdateEvenMapper;
+import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.ticket.TicketEntity;
 import com.project.saw.user.User;
 import jakarta.persistence.*;
@@ -30,19 +32,19 @@ public class Event extends RepresentationModel<Event>{
     private Long id;
 
     @Column(unique = true)
-    @NotBlank(message = "Title is mandatory")
+   // @NotBlank(message = "Title is mandatory")
     private String title;
-    @NotBlank(message = "Location is mandatory")
+  //  @NotBlank(message = "Location is mandatory")
     private String location;
-    @NotNull(message = "Price is mandatory")
+   // @NotNull(message = "Price is mandatory")
     private Double price;
     @Column(name = "starting_date")
-    @FutureOrPresent(message = "Starting date should be future or present")
+  //  @FutureOrPresent(message = "Starting date should be future or present")
     private LocalDate startingDate;
     @Column(name = "ending_date")
-    @Future(message = "Ending date should be future")
+  //  @Future(message = "Ending date should be future")
     private LocalDate endingDate;
-    @NotBlank(message = "Description is mandatory")
+   // @NotBlank(message = "Description is mandatory")
     private String description;
 
     @OneToOne(mappedBy = "eventEntity")
