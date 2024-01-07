@@ -55,8 +55,8 @@ public class UserService implements UserDetailsService {
                 .email(request.email())
                 .userRole(UserRole.PARTICIPANT)
                 .build();
-
-        return userRepository.save(userEntity);
+        userRepository.save(userEntity);
+        return userEntity;
     }
 
     private boolean emailExists(final String email) {

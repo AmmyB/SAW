@@ -37,10 +37,11 @@ class EventController {
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody @Valid CreateEventRequest createEventRequest) {
+    public ResponseEntity<Event> createEvent(@RequestBody @Valid CreateEventRequest createEventRequest) {
+        Event createEvent = eventService.createEvent(createEventRequest);
+        createEvent.add(linkTo(EventController.class).slash(createEvent.getId()).withSelfRel());
         log.info("Creating an event: {}", createEventRequest);
-        return eventService.createEvent(createEventRequest);
-
+        return ResponseEntity.ok(createEvent);
     }
 
     @PatchMapping("{eventId}")
@@ -48,15 +49,6 @@ class EventController {
         log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
         return eventService.updateEvent(eventId, updateEventRequest);
     }
-
-//    @PatchMapping("{eventId}")
-//    public ResponseEntity<UpdateEventResponse> updateEvent(@PathVariable  Long eventId, @Valid @RequestBody UpdateEventRequest updateEventRequest) {
-//        log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
-//        UpdateEventResponse event = eventService.updateEvent(eventId, updateEventRequest);
-//       event.add(linkTo(EventController.class).slash(event.getId()).withSelfRel());
-//        Link link = linkTo(EventController.class).withSelfRel();
-//        return ResponseEntity<UpdateEventResponse>(event,link);
-//    }
 
     @DeleteMapping("{eventId}")
     public void deleteEvent(@PathVariable @Valid Long eventId) {
@@ -66,6 +58,7 @@ class EventController {
 
     @GetMapping("/search")
     public List<Event> searchEvents(@RequestParam String query) {
+        log.info("Searching for an event using a query: {}", query);
         return eventService.searchEvents(query);
     }
 

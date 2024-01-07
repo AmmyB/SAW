@@ -43,15 +43,16 @@ public class EventService {
                     var error = String.format(ExceptionMessage.DUPLICATE_EVENT_ERROR_MESSAGE, request.getTitle());
                     throw new DuplicateException(error);
                 });
-                Event eventEntity = Event.builder()
-                        .title(request.getTitle())
-                        .location(request.getLocation())
-                        .price(request.getPrice())
-                        .startingDate(request.getStartingDate())
-                        .endingDate(request.getEndingDate())
-                        .description(request.getDescription())
-                        .build();
-        return eventRepository.save(eventEntity);
+        Event eventEntity = Event.builder()
+                .title(request.getTitle())
+                .location(request.getLocation())
+                .price(request.getPrice())
+                .startingDate(request.getStartingDate())
+                .endingDate(request.getEndingDate())
+                .description(request.getDescription())
+                .build();
+            eventRepository.save(eventEntity);
+        return eventEntity;
     }
 
     public UpdateEventResponse updateEvent(Long eventId, UpdateEventRequest updateEventRequest) {

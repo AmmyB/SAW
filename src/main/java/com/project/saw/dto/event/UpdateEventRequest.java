@@ -1,6 +1,5 @@
 package com.project.saw.dto.event;
 
-import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;

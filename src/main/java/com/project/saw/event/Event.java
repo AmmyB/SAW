@@ -22,6 +22,7 @@ import org.springframework.hateoas.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "Events")
 public class Event extends RepresentationModel<Event>{
 
     @Id
