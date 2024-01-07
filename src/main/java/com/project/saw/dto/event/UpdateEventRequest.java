@@ -16,14 +16,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UpdateEventRequest {
 
-    //@NotNull(message = "Price is mandatory")
+    @NotNull(message = "Price is mandatory")
     private Double price;
-    //@FutureOrPresent(message = "Starting date should be future or present")
+    @FutureOrPresent(message = "Starting date should be future or present")
     private LocalDate startingDate;
-    //@Future(message = "Ending date should be future")
+    @Future(message = "Ending date should be future")
     private LocalDate endingDate;
 
-    //@NotBlank(message = "Description is mandatory")
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
 

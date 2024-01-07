@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 
 
 class EventServiceTest {
@@ -105,12 +106,15 @@ class EventServiceTest {
     @Test
     void given_existing_event_when_add_other_details_about_the_event_with_given_id_then_event_should_be_updated() {
         //given
-        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(EVENT));
-        Mockito.when(eventRepository.save(any())).thenReturn(EVENT);
         UpdateEventRequest request = new UpdateEventRequest(150.00, LocalDate.of(2001, 1, 2),
                 LocalDate.of(2001, 1, 3), "Test description");
         UpdateEventResponse response = new UpdateEventResponse(EVENT.getId(), EVENT.getTitle(), EVENT.getLocation(),
                 request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getDescription());
+        Event event = new Event(EVENT.getId(), EVENT.getTitle(), EVENT.getLocation(),
+                request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getDescription(),null,null);
+        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(EVENT));
+        Mockito.when(eventRepository.save(any())).thenReturn(event);
+        Mockito.when(updateEvenMapper.ToEntity(EVENT,request)).thenReturn(event);
         //when
         var results = eventService.updateEvent(4L, request);
         //then

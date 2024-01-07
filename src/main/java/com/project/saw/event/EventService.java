@@ -37,16 +37,20 @@ public class EventService {
         return eventRepository.sortedListOfEvents();
     }
 
-    //TODO: rest controller advice
     public Event createEvent(CreateEventRequest request) {
-        Event eventEntity = Event.builder()
-                .title(request.getTitle())
-                .location(request.getLocation())
-                .price(request.getPrice())
-                .startingDate(request.getStartingDate())
-                .endingDate(request.getEndingDate())
-                .description(request.getDescription())
-                .build();
+        eventRepository.findByTitleIgnoreCase(request.getTitle()).stream().findAny()
+                .ifPresent(EventEntity -> {
+                    var error = String.format(ExceptionMessage.DUPLICATE_EVENT_ERROR_MESSAGE, request.getTitle());
+                    throw new DuplicateException(error);
+                });
+                Event eventEntity = Event.builder()
+                        .title(request.getTitle())
+                        .location(request.getLocation())
+                        .price(request.getPrice())
+                        .startingDate(request.getStartingDate())
+                        .endingDate(request.getEndingDate())
+                        .description(request.getDescription())
+                        .build();
         return eventRepository.save(eventEntity);
     }
 
@@ -55,12 +59,12 @@ public class EventService {
                 .map(event -> setUpdateEvent(event, updateEventRequest))
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
-
+        eventRepository.save(eventEntity);
         return eventToEventResponse(eventEntity);
     }
-    private Event setUpdateEvent(Event event,UpdateEventRequest request) {
-        updateEvenMapper.ToEntity(event,request);
-        return eventRepository.save(event);
+
+    private Event setUpdateEvent(Event event, UpdateEventRequest request) {
+        return updateEvenMapper.ToEntity(event, request);
 
     }
 

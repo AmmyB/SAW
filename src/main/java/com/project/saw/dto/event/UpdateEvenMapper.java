@@ -9,6 +9,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface UpdateEvenMapper {
 
-    void ToEntity(@MappingTarget Event eventEntity, UpdateEventRequest request );
+    Event ToEntity(@MappingTarget Event eventEntity, UpdateEventRequest request );
 
 }
