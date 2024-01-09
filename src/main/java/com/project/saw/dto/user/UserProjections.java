@@ -4,6 +4,7 @@ package com.project.saw.dto.user;
 import com.project.saw.event.Event;
 import com.project.saw.ticket.TicketEntity;
 import com.project.saw.user.UserRole;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Set;
 

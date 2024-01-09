@@ -29,37 +29,45 @@ class EventController {
     }
 
     @GetMapping
-    public CollectionModel<Event> getEventList() {
+    public ResponseEntity<CollectionModel<Event>> getEventList() {
+        log.info("Fetching list of events");
         List<Event> allEvent = eventService.getEventList();
-        allEvent.forEach(eventEntity -> eventEntity.add(linkTo(EventController.class).slash(eventEntity.getId()).withSelfRel()));
+        allEvent.forEach(event -> event.add(linkTo(EventController.class).slash(event.getId()).withSelfRel()));
         Link link = linkTo(EventController.class).withSelfRel();
-        return CollectionModel.of(allEvent, link);
+        return ResponseEntity.ok(CollectionModel.of(allEvent, link));
     }
 
     @PostMapping
     public ResponseEntity<Event> createEvent(@RequestBody @Valid CreateEventRequest createEventRequest) {
-        Event createEvent = eventService.createEvent(createEventRequest);
-        createEvent.add(linkTo(EventController.class).slash(createEvent.getId()).withSelfRel());
         log.info("Creating an event: {}", createEventRequest);
+        Event createEvent = eventService.createEvent(createEventRequest);
+        createEvent.add(linkTo(methodOn(EventController.class).createEvent(createEventRequest)).slash(createEvent.getId()).withSelfRel());
         return ResponseEntity.ok(createEvent);
     }
 
     @PatchMapping("{eventId}")
-    public UpdateEventResponse updateEvent(@PathVariable @Valid Long eventId, @RequestBody UpdateEventRequest updateEventRequest) {
+    public ResponseEntity<UpdateEventResponse> updateEvent(@PathVariable @Valid Long eventId, @RequestBody UpdateEventRequest updateEventRequest) {
         log.info("Updating an event with the id: {} by new data: {}", eventId, updateEventRequest);
-        return eventService.updateEvent(eventId, updateEventRequest);
+        UpdateEventResponse updateEvent = eventService.updateEvent(eventId, updateEventRequest);
+        updateEvent.add(linkTo(methodOn(EventController.class).updateEvent(eventId,updateEventRequest)).withSelfRel());
+        Link link = linkTo(EventController.class).withSelfRel();
+        return ResponseEntity.ok(updateEvent);
     }
 
     @DeleteMapping("{eventId}")
-    public void deleteEvent(@PathVariable @Valid Long eventId) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable @Valid Long eventId) {
         log.info("Deleting an event with the id: {}", eventId);
         eventService.delete(eventId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
-    public List<Event> searchEvents(@RequestParam String query) {
+    public ResponseEntity<CollectionModel<Event>> searchEvents(@RequestParam String query) {
         log.info("Searching for an event using a query: {}", query);
-        return eventService.searchEvents(query);
+        List<Event> searchEvent = eventService.searchEvents(query);
+        searchEvent.forEach(event -> event.add(linkTo(methodOn(EventController.class).searchEvents(query)).withSelfRel()));
+        Link link = linkTo(EventController.class).withSelfRel();
+        return ResponseEntity.ok(CollectionModel.of(searchEvent,link));
     }
 
 }

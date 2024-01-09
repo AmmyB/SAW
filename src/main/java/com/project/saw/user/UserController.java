@@ -6,6 +6,7 @@ import com.project.saw.exception.EmailExistsException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,9 @@ public class UserController {
     }
 
     @DeleteMapping("{userId}")
-    public void deleteUser( @PathVariable @Valid Long userId) {
+    public ResponseEntity<Void> deleteUser( @PathVariable @Valid Long userId) {
         log.info("Deleting a user with the id: {}", userId);
         userService.delete(userId);
+        return ResponseEntity.noContent().build();
     }
 }
