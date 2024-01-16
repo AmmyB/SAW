@@ -8,9 +8,9 @@ spring:
       ddl-auto: update
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /SAW-API-docs
   swagger-ui:
-    operations-sorter: method
+    operations-sorter: alpha
     path: /swagger-ui.html
 management:
   info:
