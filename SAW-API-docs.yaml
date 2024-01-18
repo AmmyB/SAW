@@ -1,0 +1,375 @@
+openapi: 3.0.1
+info:
+  title: SAW API
+  description: "Documentation of the saw application, which allows organizers to create\
+    \ events and collect registrations for them. Every logged in user can sign up\
+    \ and comment on the event."
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /user:
+    get:
+      tags:
+      - user-controller
+      summary: Get User List
+      description: Returns a list of all users
+      operationId: getUserList
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProjections'
+    post:
+      tags:
+      - user-controller
+      summary: Create a new user
+      description: All parameters are required. Method returns a new user object
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /event:
+    get:
+      tags:
+      - event-controller
+      summary: Get Event List
+      description: Returns a list of all current events
+      operationId: getEventList
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CollectionModelEvent'
+    post:
+      tags:
+      - event-controller
+      summary: Create a new event
+      description: All parameters are required. Method returns a new event object
+      operationId: createEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Event'
+  /event/{eventId}:
+    delete:
+      tags:
+      - event-controller
+      summary: Delete an existing event
+      description: Event id is required for deletion
+      operationId: deleteEvent
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+      - event-controller
+      summary: Update an existing event
+      description: All parameters are required. Method returns a updated event object
+      operationId: updateEvent
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEventRequest'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UpdateEventResponse'
+  /event/search:
+    get:
+      tags:
+      - event-controller
+      summary: Search for a given event
+      description: Searching for an event by a given phrase
+      operationId: searchEvents
+      parameters:
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CollectionModelEvent'
+  /user/{userId}:
+    delete:
+      tags:
+      - user-controller
+      summary: Delete an existing user
+      description: User id is required for deletion
+      operationId: deleteUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    CreateUserRequest:
+      required:
+      - password
+      - userName
+      type: object
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+    Event:
+      required:
+      - description
+      - location
+      - price
+      - title
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        location:
+          type: string
+        price:
+          type: number
+          format: double
+        startingDate:
+          type: string
+          format: date
+        endingDate:
+          type: string
+          format: date
+        description:
+          type: string
+        userEntity:
+          $ref: '#/components/schemas/User'
+        ticketEntities:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketEntity'
+        _links:
+          $ref: '#/components/schemas/Links'
+    Links:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
+    TicketEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        purchaseDate:
+          type: string
+          format: date-time
+        eventEntity:
+          $ref: '#/components/schemas/Event'
+        userEntity:
+          $ref: '#/components/schemas/User'
+    User:
+      required:
+      - password
+      - userName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - PARTICIPANT
+          - ORGANIZER
+        eventEntity:
+          $ref: '#/components/schemas/Event'
+        ticketEntities:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketEntity'
+        _links:
+          $ref: '#/components/schemas/Links'
+    CreateEventRequest:
+      required:
+      - description
+      - location
+      - price
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        location:
+          type: string
+        price:
+          type: number
+          format: double
+        startingDate:
+          type: string
+          format: date
+        endingDate:
+          type: string
+          format: date
+        description:
+          type: string
+    UpdateEventRequest:
+      required:
+      - description
+      - price
+      type: object
+      properties:
+        price:
+          type: number
+          format: double
+        startingDate:
+          type: string
+          format: date
+        endingDate:
+          type: string
+          format: date
+        description:
+          type: string
+    UpdateEventResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        location:
+          type: string
+        price:
+          type: number
+          format: double
+        startingDate:
+          type: string
+          format: date
+        endingDate:
+          type: string
+          format: date
+        description:
+          type: string
+        _links:
+          $ref: '#/components/schemas/Links'
+    UserProjections:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - PARTICIPANT
+          - ORGANIZER
+        email:
+          type: string
+        ticketEntities:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketEntity'
+        eventEntity:
+          $ref: '#/components/schemas/Event'
+        ticketEntity:
+          uniqueItems: true
+          type: array
+          writeOnly: true
+          items:
+            $ref: '#/components/schemas/TicketEntity'
+    CollectionModelEvent:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            events:
+              type: array
+              items:
+                $ref: '#/components/schemas/Event'
+        _links:
+          $ref: '#/components/schemas/Links'
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
