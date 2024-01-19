@@ -16,10 +16,19 @@ In the future:
 
 The project allows event organizers to add, remove and edit event content and enables the user (participant) to sign up for events.
 
+## Documentation
+<div align="center">
+
+
+<p></p>
+
+[See documentation hosted on GitHub Pages](https://ammyb.github.io/SAW/)
+
+</div>
+
 ## Requirements
 
 **Java 11** or any higher version
-
 
 ## Authors
 
