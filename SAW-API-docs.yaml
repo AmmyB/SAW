@@ -323,13 +323,13 @@ components:
           format: int64
         userName:
           type: string
+        email:
+          type: string
         userRole:
           type: string
           enum:
           - PARTICIPANT
           - ORGANIZER
-        email:
-          type: string
         ticketEntities:
           uniqueItems: true
           type: array
