@@ -12,6 +12,7 @@ public class OpenApiConfig {
     public OpenAPI customAPI() {
         return new OpenAPI().info(new Info()
                 .title("SAW API")
+                .version("1.0")
                 .description("Documentation of the saw application, which allows organizers to create events and collect registrations for them. " +
                         "Every logged in user can sign up and comment on the event."));
     }
