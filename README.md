@@ -16,10 +16,19 @@ In the future:
 
 The project allows event organizers to add, remove and edit event content and enables the user (participant) to sign up for events.
 
+## Documentation
+<div align="center">
+<code><img height="440" src="https://github.com/AmmyB/SAW/assets/113260620/f46715b3-cb17-4fee-a73e-30a2840f580f" alt="Swagger UI" title="Swagger UI"/></code>
+
+<p></p>
+
+[See documentation hosted on GitHub Pages](https://ammyb.github.io/SAW/)
+
+</div>
+
 ## Requirements
 
 **Java 11** or any higher version
-
 
 ## Authors
 
