@@ -18,7 +18,7 @@ The project allows event organizers to add, remove and edit event content and en
 
 ## Documentation
 <div align="center">
-<code><img height="440" src="https://github.com/AmmyB/SAW/assets/113260620/f46715b3-cb17-4fee-a73e-30a2840f580f" alt="Swagger UI" title="Swagger UI"/></code>
+
 
 <p></p>
 
