@@ -6,8 +6,8 @@ info:
     \ and comment on the event."
   version: "1.0"
 servers:
-- url: http://localhost:8080
-  description: Generated server url
+- url: /
+  description: Default Server URL
 paths:
   /user:
     get:
@@ -321,15 +321,13 @@ components:
         id:
           type: integer
           format: int64
-        userName:
-          type: string
-        email:
-          type: string
         userRole:
           type: string
           enum:
           - PARTICIPANT
           - ORGANIZER
+        email:
+          type: string
         ticketEntities:
           uniqueItems: true
           type: array
@@ -337,6 +335,8 @@ components:
             $ref: '#/components/schemas/TicketEntity'
         eventEntity:
           $ref: '#/components/schemas/Event'
+        userName:
+          type: string
         ticketEntity:
           uniqueItems: true
           type: array
