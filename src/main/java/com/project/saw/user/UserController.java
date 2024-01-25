@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Slf4j
 @RestController
 @RequestMapping("/user")
-public class UserController {
+class UserController {
 
     private final UserService userService;
 

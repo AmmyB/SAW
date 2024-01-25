@@ -1,5 +1,7 @@
 package com.project.saw.event;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +20,5 @@ interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> searchByTitleLikeIgnoreCase(@Param("query") String query);
 
     @Query("SELECT e FROM Event e WHERE e.endingDate >= now() ORDER BY e.startingDate ASC")
-    List<Event> sortedListOfEvents();
-
+    Page<Event> sortedListOfEvents(Pageable pageable);
 }

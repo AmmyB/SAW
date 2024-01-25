@@ -7,8 +7,14 @@ import com.project.saw.dto.event.UpdateEventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,18 +31,26 @@ class EventController {
 
     private final EventService eventService;
 
+    @Autowired
+    private EventModelAssembler eventModelAssembler;
+
+    @Autowired
+    private PagedResourcesAssembler<Event> eventPagedResourcesAssembler;
+
+
     public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
+
     @Operation(summary = "Get Event List", description = "Returns a list of all current events")
     @GetMapping
-    public ResponseEntity<CollectionModel<Event>> getEventList() {
+    public ResponseEntity<CollectionModel<EntityModel<Event>>> getEventList(Pageable pageable) {
         log.info("Fetching list of events");
-        List<Event> allEvent = eventService.getEventList();
-        allEvent.forEach(event -> event.add(linkTo(EventController.class).slash(event.getId()).withSelfRel()));
-        Link link = linkTo(EventController.class).withSelfRel();
-        return ResponseEntity.ok(CollectionModel.of(allEvent, link));
+        Page<Event> allEvent = eventService.getEventList(pageable);
+        Link link = linkTo(methodOn(EventController.class).getEventList(pageable)).withSelfRel();
+        PagedModel<EntityModel<Event>> pagedModel = eventPagedResourcesAssembler.toModel(allEvent,eventModelAssembler);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @Operation(summary = "Create a new event", description = "All parameters are required. Method returns a new event object")
