@@ -77,6 +77,7 @@ public class EventService {
                 eventEntity.getPrice(),
                 eventEntity.getStartingDate(),
                 eventEntity.getEndingDate(),
+                eventEntity.getSeatingCapacity(),
                 eventEntity.getDescription()
         );
 

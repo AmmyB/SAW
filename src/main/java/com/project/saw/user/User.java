@@ -2,7 +2,7 @@ package com.project.saw.user;
 
 
 import com.project.saw.event.Event;
-import com.project.saw.ticket.TicketEntity;
+import com.project.saw.ticket.Ticket;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -46,5 +46,5 @@ public class User extends RepresentationModel<User> {
     private Event eventEntity;
 
     @OneToMany(mappedBy = "userEntity")
-    private Set<TicketEntity> ticketEntities;
+    private Set<Ticket> ticketEntities;
 }

@@ -2,7 +2,7 @@ package com.project.saw.dto.user;
 
 
 import com.project.saw.event.Event;
-import com.project.saw.ticket.TicketEntity;
+import com.project.saw.ticket.Ticket;
 import com.project.saw.user.UserRole;
 
 import java.util.Set;
@@ -19,7 +19,7 @@ public interface UserProjections {
 
     Event getEventEntity();
 
-    Set<TicketEntity> getTicketEntities();
+    Set<Ticket> getTicketEntities();
 
     void setId(Long id);
 
@@ -31,6 +31,6 @@ public interface UserProjections {
 
     void setEventEntity(Event eventEntity);
 
-    void setTicketEntity(Set<TicketEntity> ticketEntities);
+    void setTicketEntity(Set<Ticket> ticketEntities);
 
 }

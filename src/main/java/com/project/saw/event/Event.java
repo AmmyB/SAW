@@ -1,7 +1,7 @@
 package com.project.saw.event;
 
 
-import com.project.saw.ticket.TicketEntity;
+import com.project.saw.ticket.Ticket;
 import com.project.saw.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
@@ -41,6 +41,9 @@ public class Event extends RepresentationModel<Event>{
     @Column(name = "ending_date")
     @Future(message = "Ending date should be future")
     private LocalDate endingDate;
+    @Column(name = "seating_capacity")
+    @NotNull(message = "Seating capacity is mandatory")
+    private Integer seatingCapacity;
     @NotBlank(message = "Description is mandatory")
     private String description;
 
@@ -48,7 +51,7 @@ public class Event extends RepresentationModel<Event>{
     private User userEntity;
 
     @OneToMany(mappedBy = "eventEntity")
-    private Set<TicketEntity> ticketEntities;
+    private Set<Ticket> ticketEntities;
 
 
 

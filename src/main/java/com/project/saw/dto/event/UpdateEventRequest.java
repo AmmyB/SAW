@@ -21,7 +21,8 @@ public class UpdateEventRequest {
     private LocalDate startingDate;
     @Future(message = "Ending date should be future")
     private LocalDate endingDate;
-
+    @NotNull(message = "Seating capacity is mandatory")
+    private Integer seatingCapacity;
     @NotBlank(message = "Description is mandatory")
     private String description;
 

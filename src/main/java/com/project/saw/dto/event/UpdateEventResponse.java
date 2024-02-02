@@ -19,5 +19,6 @@ public class UpdateEventResponse extends RepresentationModel<UpdateEventResponse
     private Double price;
     private LocalDate startingDate;
     private LocalDate endingDate;
+    private Integer seatingCapacity;
     private String description;
 }

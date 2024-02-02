@@ -12,6 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
@@ -22,7 +26,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
 
 
 class EventServiceTest {
@@ -32,7 +35,7 @@ class EventServiceTest {
     private UpdateEvenMapper updateEvenMapper;
 
     private static final Event EVENT = new Event(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
-            LocalDate.of(2023, 10, 1), LocalDate.of(2023, 10, 8),
+            LocalDate.of(2023, 10, 1), LocalDate.of(2024, 10, 8), 50,
             "W pierwszym tygodniu października, Unsound zaburzy więc stały, lokalny porządek miasta, organizując koncerty, całonocne imprezy klubowe, dyskusje i projekcje filmowe.",
             null, null);
 
@@ -52,18 +55,20 @@ class EventServiceTest {
     void given_not_empty_list_when_fetch_the_list_then_event_list_should_be_returned() {
         //given
         List<Event> list = Stream.of(EVENT, new Event(5L, "testowy event", "Warszawa", 10.00,
-                        LocalDate.of(2023, 9, 24), LocalDate.of(2023, 9, 24),
+                        LocalDate.of(2023, 9, 24), LocalDate.of(2024, 9, 24), 20,
                         "test test",
                         null, null))
                 .sorted(Comparator.comparing(Event::getStartingDate))
                 .filter(e -> e.getEndingDate()
                         .isAfter(LocalDate.now()))
                 .toList();
-        Mockito.when(eventRepository.findAll()).thenReturn(list);
+        Page<Event> page = new PageImpl<>(list);
+        Pageable firstPageWithTwoElements = PageRequest.of(0, 2);
+        Mockito.when(eventRepository.sortedListOfEvents(any())).thenReturn(page);
         //when
-        //var results = eventService.getEventList();
+        var results = eventService.getEventList(firstPageWithTwoElements).stream().toList();
         //then
-        //Assertions.assertEquals(list, results);
+        Assertions.assertEquals(list, results);
 
     }
 
@@ -71,7 +76,7 @@ class EventServiceTest {
     void given_repo_with_not_existing_event_when_add_new_event_then_event_should_be_created() {
         //given
         CreateEventRequest request = new CreateEventRequest("test", "test location", 9.00,
-                LocalDate.of(2001, 1, 2), LocalDate.of(2001, 1, 2),
+                LocalDate.of(2001, 1, 2), LocalDate.of(2001, 1, 2), 20,
                 "Test description");
         //when
         var results = eventService.createEvent(request);
@@ -92,7 +97,7 @@ class EventServiceTest {
         Mockito.when(eventRepository.findByTitleIgnoreCase(any())).thenReturn(Optional.of(EVENT));
         CreateEventRequest request = new CreateEventRequest("Unsound Festival 2023: WEEKLY PASS",
                 "test location", 1.00, LocalDate.of(2001, 1, 2),
-                LocalDate.of(2001, 1, 2), "Test description");
+                LocalDate.of(2001, 1, 2), 20, "Test description");
         //when
         var exception = Assertions.assertThrows(DuplicateException.class, () -> eventService.createEvent(request));
         //then
@@ -107,14 +112,14 @@ class EventServiceTest {
     void given_existing_event_when_add_other_details_about_the_event_with_given_id_then_event_should_be_updated() {
         //given
         UpdateEventRequest request = new UpdateEventRequest(150.00, LocalDate.of(2001, 1, 2),
-                LocalDate.of(2001, 1, 3), "Test description");
+                LocalDate.of(2001, 1, 3), 30, "Test description");
         UpdateEventResponse response = new UpdateEventResponse(EVENT.getId(), EVENT.getTitle(), EVENT.getLocation(),
-                request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getDescription());
+                request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getSeatingCapacity(), request.getDescription());
         Event event = new Event(EVENT.getId(), EVENT.getTitle(), EVENT.getLocation(),
-                request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getDescription(),null,null);
+                request.getPrice(), request.getStartingDate(), request.getEndingDate(), request.getSeatingCapacity(), request.getDescription(), null, null);
         Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(EVENT));
         Mockito.when(eventRepository.save(any())).thenReturn(event);
-        Mockito.when(updateEvenMapper.ToEntity(EVENT,request)).thenReturn(event);
+        Mockito.when(updateEvenMapper.ToEntity(EVENT, request)).thenReturn(event);
         //when
         var results = eventService.updateEvent(4L, request);
         //then
@@ -133,21 +138,21 @@ class EventServiceTest {
         //given
         Long eventId = 4L;
         UpdateEventRequest request = new UpdateEventRequest(150.00, LocalDate.of(2001, 1, 2),
-                LocalDate.of(2001, 1, 3), "Test description");
+                LocalDate.of(2001, 1, 3), 20, "Test description");
         //when
-        var exception = Assertions.assertThrows(EntityNotFoundException.class, ()-> eventService.updateEvent(eventId,request));
+        var exception = Assertions.assertThrows(EntityNotFoundException.class, () -> eventService.updateEvent(eventId, request));
         //then
         Mockito.verify(eventRepository, Mockito.never()).save(any());
-        var expectedMessage =  String.format("Event not found with id: " +  eventId);
+        var expectedMessage = String.format("Event not found with id: " + eventId);
         var actualMessage = exception.getMessage();
-        Assertions.assertEquals(expectedMessage,actualMessage);
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     void given_existing_event_when_call_delete_method_with_event_id_then_event_should_be_deleted() {
         //given
         Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
-                LocalDate.of(2005, 5, 6), "Test description", null, null);
+                LocalDate.of(2005, 5, 6), 30, "Test description", null, null);
         Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());
         //when
         eventService.delete(event.getId());
@@ -160,14 +165,14 @@ class EventServiceTest {
     void given_not_existing_event_when_call_delete_method_with_not_existing_event_id_then_method_throws_exception() {
         //given
         Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
-                LocalDate.of(2005, 5, 6), "Test description", null, null);
+                LocalDate.of(2005, 5, 6), 30, "Test description", null, null);
         //when
-        var exception = Assertions.assertThrows(EntityNotFoundException.class, ()->eventService.delete(event.getId()));
+        var exception = Assertions.assertThrows(EntityNotFoundException.class, () -> eventService.delete(event.getId()));
         //then
         Mockito.verify(eventRepository, Mockito.never()).delete(any());
-        var expectedMessage =  String.format("Event not found with id: " +  event.getId());
+        var expectedMessage = String.format("Event not found with id: " + event.getId());
         var actualMessage = exception.getMessage();
-        Assertions.assertEquals(expectedMessage,actualMessage);
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
