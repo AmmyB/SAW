@@ -5,6 +5,8 @@ import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.EmailExistsException;
 import com.project.saw.exception.ExceptionMessage;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.*;
 
 import com.project.saw.dto.user.CreateUserRequest;
@@ -34,8 +36,8 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public List<UserProjections> getUserList() {
-        return userRepository.listOfUsers(Sort.by("id"));
+    public Page<UserProjections> getUserList(Pageable pageable) {
+        return userRepository.listOfUsers(pageable);
     }
 
     public User createUser(CreateUserRequest request) throws EmailExistsException {

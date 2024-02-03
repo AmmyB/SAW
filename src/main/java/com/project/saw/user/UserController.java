@@ -6,14 +6,18 @@ import com.project.saw.exception.EmailExistsException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Slf4j
 @RestController
@@ -22,14 +26,23 @@ class UserController {
 
     private final UserService userService;
 
+    @Autowired
+    private  UserModelAssembler userModelAssembler;
+    @Autowired
+    private PagedResourcesAssembler<UserProjections> userProjectionsPagedResourcesAssembler;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @Operation(summary = "Get User List", description = "Returns a list of all users" )
     @GetMapping
-    public List<UserProjections> getUserList() {
-        return userService.getUserList();
+    public ResponseEntity<PagedModel<EntityModel<UserProjections>>> getUserList(Pageable pageable) {
+        log.info("Fetching list of users");
+        Page<UserProjections> userList =  userService.getUserList(pageable);
+        Link link = linkTo(methodOn(UserController.class).getUserList(pageable)).withSelfRel();
+        PagedModel<EntityModel<UserProjections>> pagedModel = userProjectionsPagedResourcesAssembler.toModel(userList,userModelAssembler);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @Operation(summary = "Create a new user", description = "All parameters are required. Method returns a new user object")

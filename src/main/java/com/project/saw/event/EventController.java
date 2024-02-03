@@ -89,5 +89,4 @@ class EventController {
         Link link = linkTo(EventController.class).withSelfRel();
         return ResponseEntity.ok(CollectionModel.of(searchEvent,link));
     }
-
 }

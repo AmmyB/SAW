@@ -36,3 +36,4 @@ The project allows event organizers to add, remove and edit event content and en
 ## Authors
 
 - [@AmmyB](https://github.com/AmmyB)
+
