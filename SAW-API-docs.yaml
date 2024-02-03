@@ -16,15 +16,19 @@ paths:
       summary: Get User List
       description: Returns a list of all users
       operationId: getUserList
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserProjections'
+                $ref: '#/components/schemas/PagedModelEntityModelUserProjections'
     post:
       tags:
       - user-controller
@@ -182,6 +186,7 @@ components:
       - description
       - location
       - price
+      - seatingCapacity
       - title
       type: object
       properties:
@@ -201,6 +206,9 @@ components:
         endingDate:
           type: string
           format: date
+        seatingCapacity:
+          type: integer
+          format: int32
         description:
           type: string
         userEntity:
@@ -209,14 +217,14 @@ components:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/TicketEntity'
+            $ref: '#/components/schemas/Ticket'
         _links:
           $ref: '#/components/schemas/Links'
     Links:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/Link'
-    TicketEntity:
+    Ticket:
       type: object
       properties:
         id:
@@ -255,7 +263,7 @@ components:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/TicketEntity'
+            $ref: '#/components/schemas/Ticket'
         _links:
           $ref: '#/components/schemas/Links'
     CreateEventRequest:
@@ -263,6 +271,7 @@ components:
       - description
       - location
       - price
+      - seatingCapacity
       - title
       type: object
       properties:
@@ -279,12 +288,16 @@ components:
         endingDate:
           type: string
           format: date
+        seatingCapacity:
+          type: integer
+          format: int32
         description:
           type: string
     UpdateEventRequest:
       required:
       - description
       - price
+      - seatingCapacity
       type: object
       properties:
         price:
@@ -296,6 +309,9 @@ components:
         endingDate:
           type: string
           format: date
+        seatingCapacity:
+          type: integer
+          format: int32
         description:
           type: string
     UpdateEventResponse:
@@ -317,11 +333,29 @@ components:
         endingDate:
           type: string
           format: date
+        seatingCapacity:
+          type: integer
+          format: int32
         description:
           type: string
         _links:
           $ref: '#/components/schemas/Links'
-    UserProjections:
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    EntityModelUserProjections:
       type: object
       properties:
         id:
@@ -340,7 +374,7 @@ components:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/TicketEntity'
+            $ref: '#/components/schemas/Ticket'
         eventEntity:
           $ref: '#/components/schemas/Event'
         ticketEntity:
@@ -348,22 +382,38 @@ components:
           type: array
           writeOnly: true
           items:
-            $ref: '#/components/schemas/TicketEntity'
-    Pageable:
+            $ref: '#/components/schemas/Ticket'
+        _links:
+          $ref: '#/components/schemas/Links'
+    PageMetadata:
       type: object
       properties:
-        page:
-          minimum: 0
-          type: integer
-          format: int32
         size:
-          minimum: 1
           type: integer
-          format: int32
-        sort:
-          type: array
-          items:
-            type: string
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        number:
+          type: integer
+          format: int64
+    PagedModelEntityModelUserProjections:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            userProjectionses:
+              type: array
+              items:
+                $ref: '#/components/schemas/EntityModelUserProjections'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
     CollectionModelEntityModelEvent:
       type: object
       properties:
@@ -381,6 +431,7 @@ components:
       - description
       - location
       - price
+      - seatingCapacity
       - title
       type: object
       properties:
@@ -400,6 +451,9 @@ components:
         endingDate:
           type: string
           format: date
+        seatingCapacity:
+          type: integer
+          format: int32
         description:
           type: string
         userEntity:
@@ -408,7 +462,7 @@ components:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/TicketEntity'
+            $ref: '#/components/schemas/Ticket'
         _links:
           $ref: '#/components/schemas/Links'
     CollectionModelEvent:

@@ -1,6 +1,5 @@
 # :date: Saw Application - Website with concerts, events and festivals
-[![Visits Badge](https://badges.pufler.dev/visits/AmmyB/SAW?&color=green)](https://github.com/AmmyB/SAW) 
-[![Updated Badge](https://badges.pufler.dev/updated/AmmyB/SAW?&color=blue)](https://github.com/AmmyB/SAW)
+[![Visits Badge](https://badges.pufler.dev/visits/AmmyB/SAW?&color=green)](https://github.com/AmmyB/SAW)
 
 The website offers several basic functionalities, such as:
 <br /><br />
