@@ -47,9 +47,9 @@ class EventController {
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<Event>>> getEventList(Pageable pageable) {
         log.info("Fetching list of events");
-        Page<Event> allEvent = eventService.getEventList(pageable);
+        Page<Event> allEvents = eventService.getEventList(pageable);
         Link link = linkTo(methodOn(EventController.class).getEventList(pageable)).withSelfRel();
-        PagedModel<EntityModel<Event>> pagedModel = eventPagedResourcesAssembler.toModel(allEvent,eventModelAssembler);
+        PagedModel<EntityModel<Event>> pagedModel = eventPagedResourcesAssembler.toModel(allEvents,eventModelAssembler);
         return ResponseEntity.ok(pagedModel);
     }
 

@@ -7,16 +7,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "tickets")
 public class Ticket {
 
@@ -28,10 +27,16 @@ public class Ticket {
     @CreationTimestamp
     private LocalDateTime purchaseDate;
 
+    private UUID barcode;
+
     @ManyToOne
     private Event eventEntity;
 
     @ManyToOne
     private User userEntity;
 
+    public Ticket(){
+        this.barcode = UUID.randomUUID();
+    }
 }
+
