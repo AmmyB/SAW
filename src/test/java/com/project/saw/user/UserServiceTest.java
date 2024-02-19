@@ -12,14 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -54,20 +56,19 @@ class UserServiceTest {
     @Test
     void given_not_empty_list_when_fetch_the_list_then_users_list_should_be_returned() {
         //given
-        userProjections.setId(4L);
-        userProjections.setUserName("testUser");
-        userProjections.setEmail("xyz@vp.pl");
-        userProjections.setUserRole(UserRole.PARTICIPANT);
-        userProjections.setEventEntity(null);
-        userProjections.setTicketEntity(null);
-
-        Mockito.when(userRepository.listOfUsers(Sort.by("id"))).thenReturn(Collections.singletonList(userProjections));
-
-//        when
-        var results = userService.getUserList();
-
-//        then
-        Assertions.assertEquals(Collections.singletonList(userProjections), results);
+        List<UserProjections> list = new ArrayList<>();
+        UserProjections user1 = Mockito.mock(UserProjections.class);
+        UserProjections user2 = Mockito.mock(UserProjections.class);
+        list.add(user1);
+        list.add(user2);
+        Page<UserProjections> page = new PageImpl<>(list,PageRequest.of(0,10),list.size());
+        Mockito.when(userRepository.listOfUsers(any(Pageable.class))).thenReturn(page);
+        Pageable pageable = PageRequest.of(0,10);
+        //when
+        var results = userService.getUserList(pageable);
+        //then
+        Assertions.assertEquals(page, results);
+        Mockito.verify(userRepository, Mockito.times(1)).listOfUsers(pageable);
     }
 
     @Test
