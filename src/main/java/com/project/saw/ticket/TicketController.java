@@ -1,7 +1,9 @@
 package com.project.saw.ticket;
 
 
+import com.project.saw.dto.ticket.TicketProjections;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,12 +42,20 @@ public class TicketController {
 
     @Operation(summary = "Get Ticket List for Event", description = "Returns a list of all tickets for given event")
     @GetMapping("/{eventId}/tickets")
-    public ResponseEntity<CollectionModel<EntityModel<Ticket>>> getTicketListOfEvent(Pageable pageable, Long eventId){
+    public ResponseEntity<CollectionModel<EntityModel<Ticket>>> getTicketListOfEvent(Pageable pageable, @PathVariable @Valid Long eventId){
         log.info("Fetching list of ticket for a given event");
         Page<Ticket> allTickets = ticketService.getTicketListforEvent(pageable,eventId);
         Link link = linkTo(methodOn(TicketController.class).getTicketListOfEvent(pageable,eventId)).withSelfRel();
         PagedModel<EntityModel<Ticket>> pagedModel = ticketPagedResourcesAssembler.toModel(allTickets,ticketModelAssembler);
         return ResponseEntity.ok(pagedModel);
+    }
+
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<TicketProjections> getTicket(@PathVariable @Valid Long ticketId){
+        log.info("Fetching a ticket: {}", ticketId);
+        TicketProjections ticket = ticketService.findTicket(ticketId);
+        Link link = linkTo(methodOn(TicketController.class).getTicket(ticketId)).withSelfRel();
+        return ResponseEntity.ok(ticket);
     }
 
 

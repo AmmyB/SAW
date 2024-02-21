@@ -1,6 +1,7 @@
 package com.project.saw.ticket;
 
 
+import com.project.saw.dto.ticket.TicketProjections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,5 +19,10 @@ public class TicketService {
 
     public Page<Ticket> getTicketListforEvent(Pageable pageable, Long eventId) {
         return ticketRepository.sortedListOfTicketForEvent(pageable, eventId);
+    }
+
+
+    public TicketProjections findTicket(Long ticketId) {
+       return ticketRepository.findTicketById(ticketId);
     }
 }
