@@ -130,6 +130,27 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/UpdateEventResponse'
+  /ticket/{ticketId}:
+    get:
+      tags:
+      - ticket-controller
+      summary: Get a Ticket by Id
+      description: Returns a Tickets for given ID
+      operationId: getTicket
+      parameters:
+      - name: ticketId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TicketProjections'
   /ticket/{eventId}/tickets:
     get:
       tags:
@@ -144,7 +165,7 @@ paths:
         schema:
           $ref: '#/components/schemas/Pageable'
       - name: eventId
-        in: query
+        in: path
         required: true
         schema:
           type: integer
@@ -390,28 +411,28 @@ components:
         id:
           type: integer
           format: int64
+        email:
+          type: string
+        userName:
+          type: string
+        userRole:
+          type: string
+          enum:
+          - PARTICIPANT
+          - ORGANIZER
+        eventEntity:
+          $ref: '#/components/schemas/Event'
+        ticketEntities:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
         ticketEntity:
           uniqueItems: true
           type: array
           writeOnly: true
           items:
             $ref: '#/components/schemas/Ticket'
-        eventEntity:
-          $ref: '#/components/schemas/Event'
-        userRole:
-          type: string
-          enum:
-          - PARTICIPANT
-          - ORGANIZER
-        email:
-          type: string
-        ticketEntities:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Ticket'
-        userName:
-          type: string
         _links:
           $ref: '#/components/schemas/Links'
     PageMetadata:
@@ -443,6 +464,20 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
+    TicketProjections:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        eventEntity:
+          $ref: '#/components/schemas/Event'
+        purchaseDate:
+          type: string
+          format: date-time
+        barcode:
+          type: string
+          format: uuid
     CollectionModelEntityModelTicket:
       type: object
       properties:

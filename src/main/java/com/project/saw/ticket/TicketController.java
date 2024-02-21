@@ -14,10 +14,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -36,27 +33,27 @@ public class TicketController {
     @Autowired
     private PagedResourcesAssembler<Ticket> ticketPagedResourcesAssembler;
 
-    public TicketController(TicketService ticketService){
+    public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
     @Operation(summary = "Get Ticket List for Event", description = "Returns a list of all tickets for given event")
     @GetMapping("/{eventId}/tickets")
-    public ResponseEntity<CollectionModel<EntityModel<Ticket>>> getTicketListOfEvent(Pageable pageable, @PathVariable @Valid Long eventId){
+    public ResponseEntity<CollectionModel<EntityModel<Ticket>>> getTicketListOfEvent(Pageable pageable, @PathVariable @Valid Long eventId) {
         log.info("Fetching list of ticket for a given event");
-        Page<Ticket> allTickets = ticketService.getTicketListforEvent(pageable,eventId);
-        Link link = linkTo(methodOn(TicketController.class).getTicketListOfEvent(pageable,eventId)).withSelfRel();
-        PagedModel<EntityModel<Ticket>> pagedModel = ticketPagedResourcesAssembler.toModel(allTickets,ticketModelAssembler);
+        Page<Ticket> allTickets = ticketService.getTicketListforEvent(pageable, eventId);
+        Link link = linkTo(methodOn(TicketController.class).getTicketListOfEvent(pageable, eventId)).withSelfRel();
+        PagedModel<EntityModel<Ticket>> pagedModel = ticketPagedResourcesAssembler.toModel(allTickets, ticketModelAssembler);
         return ResponseEntity.ok(pagedModel);
     }
 
+    @Operation(summary = "Get a Ticket by Id", description = "Returns a Tickets for given ID")
     @GetMapping("/{ticketId}")
-    public ResponseEntity<TicketProjections> getTicket(@PathVariable @Valid Long ticketId){
+    public ResponseEntity<TicketProjections> getTicket(@PathVariable @Valid Long ticketId) {
         log.info("Fetching a ticket: {}", ticketId);
         TicketProjections ticket = ticketService.findTicket(ticketId);
         Link link = linkTo(methodOn(TicketController.class).getTicket(ticketId)).withSelfRel();
         return ResponseEntity.ok(ticket);
     }
-
-
 }
+
