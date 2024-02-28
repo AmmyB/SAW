@@ -55,5 +55,14 @@ public class TicketController {
         Link link = linkTo(methodOn(TicketController.class).getTicket(ticketId)).withSelfRel();
         return ResponseEntity.ok(ticket);
     }
+
+    @Operation(summary = "Create a new ticket", description = "All parameters are required. Method returns a new ticket object for the given user and event")
+    @PostMapping("{eventId}")
+    public ResponseEntity<Ticket> createTicket(@PathVariable @Valid Long eventId){
+        log.info("Creating a ticket for an event: {}", eventId);
+        Ticket createTicket = ticketService.createTicket(eventId);
+        createTicket.add(linkTo(methodOn(TicketController.class).createTicket(eventId)).withSelfRel());
+        return ResponseEntity.ok(createTicket);
+    }
 }
 

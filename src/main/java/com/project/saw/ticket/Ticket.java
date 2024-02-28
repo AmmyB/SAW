@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @Table(name = "tickets")
-public class Ticket {
+public class Ticket extends RepresentationModel<Ticket> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

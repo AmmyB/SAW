@@ -48,6 +48,28 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/User'
+  /ticket/{eventId}:
+    post:
+      tags:
+      - ticket-controller
+      summary: Create a new ticket
+      description: All parameters are required. Method returns a new ticket object
+        for the given user and event
+      operationId: createTicket
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Ticket'
   /event:
     get:
       tags:
@@ -287,6 +309,8 @@ components:
           $ref: '#/components/schemas/Event'
         userEntity:
           $ref: '#/components/schemas/User'
+        _links:
+          $ref: '#/components/schemas/Links'
     User:
       required:
       - password
