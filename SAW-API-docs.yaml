@@ -411,17 +411,17 @@ components:
         id:
           type: integer
           format: int64
-        email:
-          type: string
         userName:
           type: string
+        eventEntity:
+          $ref: '#/components/schemas/Event'
         userRole:
           type: string
           enum:
           - PARTICIPANT
           - ORGANIZER
-        eventEntity:
-          $ref: '#/components/schemas/Event'
+        email:
+          type: string
         ticketEntities:
           uniqueItems: true
           type: array
