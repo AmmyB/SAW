@@ -49,10 +49,10 @@ public class TicketController {
 
     @Operation(summary = "Get a Ticket by Id", description = "Returns a Tickets for given ID")
     @GetMapping("/{ticketId}")
-    public ResponseEntity<TicketProjections> getTicket(@PathVariable @Valid Long ticketId) {
+    public ResponseEntity<TicketProjections> getTicketDetails(@PathVariable @Valid Long ticketId) {
         log.info("Fetching a ticket: {}", ticketId);
         TicketProjections ticket = ticketService.findTicket(ticketId);
-        Link link = linkTo(methodOn(TicketController.class).getTicket(ticketId)).withSelfRel();
+        Link link = linkTo(methodOn(TicketController.class).getTicketDetails(ticketId)).withSelfRel();
         return ResponseEntity.ok(ticket);
     }
 
@@ -63,6 +63,14 @@ public class TicketController {
         Ticket createTicket = ticketService.createTicket(eventId);
         createTicket.add(linkTo(methodOn(TicketController.class).createTicket(eventId)).withSelfRel());
         return ResponseEntity.ok(createTicket);
+    }
+
+    @Operation(summary = "Delete an existing ticket", description = "Ticket id is required for deletion. The method deletes the ticket and its associated data.")
+    @DeleteMapping("{ticketId}")
+    public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId){
+        log.info("Deleting a ticket with the id: {}", ticketId);
+        ticketService.deleteTicket(ticketId);
+        return ResponseEntity.noContent().build();
     }
 }
 

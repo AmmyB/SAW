@@ -158,7 +158,7 @@ paths:
       - ticket-controller
       summary: Get a Ticket by Id
       description: Returns a Tickets for given ID
-      operationId: getTicket
+      operationId: getTicketDetails
       parameters:
       - name: ticketId
         in: path
@@ -173,6 +173,23 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TicketProjections'
+    delete:
+      tags:
+      - ticket-controller
+      summary: Delete an existing ticket
+      description: Ticket id is required for deletion. The method deletes the ticket
+        and its associated data.
+      operationId: deleteTicket
+      parameters:
+      - name: ticketId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
   /ticket/{eventId}/tickets:
     get:
       tags:
@@ -439,6 +456,11 @@ components:
           type: string
         eventEntity:
           $ref: '#/components/schemas/Event'
+        ticketEntities:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
         userRole:
           type: string
           enum:
@@ -446,11 +468,6 @@ components:
           - ORGANIZER
         email:
           type: string
-        ticketEntities:
-          uniqueItems: true
-          type: array
-          items:
-            $ref: '#/components/schemas/Ticket'
         ticketEntity:
           uniqueItems: true
           type: array
@@ -494,14 +511,16 @@ components:
         id:
           type: integer
           format: int64
+        userEntity:
+          $ref: '#/components/schemas/User'
         eventEntity:
           $ref: '#/components/schemas/Event'
-        purchaseDate:
-          type: string
-          format: date-time
         barcode:
           type: string
           format: uuid
+        purchaseDate:
+          type: string
+          format: date-time
     CollectionModelEntityModelTicket:
       type: object
       properties:

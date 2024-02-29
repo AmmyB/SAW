@@ -8,6 +8,7 @@ import com.project.saw.exception.ExceptionMessage;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,5 +63,18 @@ public class TicketService {
                 .purchaseDate(LocalDateTime.now())
                 .build();
         return ticketRepository.save(ticket);
+    }
+
+    @Transactional
+    public void deleteTicket(Long ticketId){
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(()-> new EntityNotFoundException(ExceptionMessage.TICKET_NOT_FOUND_EXCEPTION_MESSAGE + ticketId));
+        User user = ticket.getUserEntity();
+        user.getTicketEntities().remove(ticket);
+
+        Event event = ticket.getEventEntity();
+        event.getTicketEntities().remove(ticket);
+
+        ticketRepository.delete(ticket);
     }
 }

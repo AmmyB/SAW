@@ -18,5 +18,6 @@ public interface TicketProjections {
 
     Event getEventEntity();
 
+    User getUserEntity();
 
 }

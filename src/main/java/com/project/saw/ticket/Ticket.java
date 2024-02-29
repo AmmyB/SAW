@@ -4,6 +4,7 @@ package com.project.saw.ticket;
 import com.project.saw.event.Event;
 import com.project.saw.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
