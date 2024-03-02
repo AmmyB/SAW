@@ -54,7 +54,9 @@ class UserController {
         return ResponseEntity.ok(createUser);
     }
 
-    @Operation(summary = "Delete an existing user", description = "User id is required for deletion")
+    @Operation(summary = "Delete an existing user and its associated data", description = "User id is required for deletion. " +
+            "The method deletes the user and its associated data: removes the user's information from the Event " +
+            "table and deletes all tickets associated with the user.")
     @DeleteMapping("{userId}")
     public ResponseEntity<Void> deleteUser( @PathVariable @Valid Long userId) {
         log.info("Deleting a user with the id: {}", userId);

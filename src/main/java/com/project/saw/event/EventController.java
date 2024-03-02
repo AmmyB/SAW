@@ -72,7 +72,9 @@ class EventController {
         return ResponseEntity.ok(updateEvent);
     }
 
-    @Operation(summary = "Delete an existing event", description = "Event id is required for deletion")
+    @Operation(summary = "Delete an existing event and its associated data", description = "Event id is required for deletion. " +
+            "The method deletes the event and its associated data: removes the event " +
+            "information in the Users table and deletes all ticket for the event. ")
     @DeleteMapping("{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable @Valid Long eventId) {
         log.info("Deleting an event with the id: {}", eventId);

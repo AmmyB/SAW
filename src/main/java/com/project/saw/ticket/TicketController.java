@@ -65,7 +65,9 @@ public class TicketController {
         return ResponseEntity.ok(createTicket);
     }
 
-    @Operation(summary = "Delete an existing ticket", description = "Ticket id is required for deletion. The method deletes the ticket and its associated data.")
+    @Operation(summary = "Delete an existing ticket and its associated data.", description = "Ticket id is required for deletion. " +
+            "The method removes the ticket and its associated data: " +
+            "deletes the ticket information in the Users and Events tables.")
     @DeleteMapping("{ticketId}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId){
         log.info("Deleting a ticket with the id: {}", ticketId);

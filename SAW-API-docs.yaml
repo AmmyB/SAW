@@ -113,8 +113,10 @@ paths:
     delete:
       tags:
       - event-controller
-      summary: Delete an existing event
-      description: Event id is required for deletion
+      summary: Delete an existing event and its associated data
+      description: "Event id is required for deletion. The method deletes the event\
+        \ and its associated data: removes the event information in the Users table\
+        \ and deletes all ticket for the event. "
       operationId: deleteEvent
       parameters:
       - name: eventId
@@ -176,9 +178,10 @@ paths:
     delete:
       tags:
       - ticket-controller
-      summary: Delete an existing ticket
-      description: Ticket id is required for deletion. The method deletes the ticket
-        and its associated data.
+      summary: Delete an existing ticket and its associated data.
+      description: "Ticket id is required for deletion. The method removes the ticket\
+        \ and its associated data: deletes the ticket information in the Users and\
+        \ Events tables."
       operationId: deleteTicket
       parameters:
       - name: ticketId
@@ -240,8 +243,10 @@ paths:
     delete:
       tags:
       - user-controller
-      summary: Delete an existing user
-      description: User id is required for deletion
+      summary: Delete an existing user and its associated data
+      description: "User id is required for deletion. The method deletes the user\
+        \ and its associated data: removes the user's information from the Event table\
+        \ and deletes all tickets associated with the user."
       operationId: deleteUser
       parameters:
       - name: userId

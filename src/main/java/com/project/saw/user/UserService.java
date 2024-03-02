@@ -1,10 +1,15 @@
 package com.project.saw.user;
 
 
+import com.project.saw.event.Event;
+import com.project.saw.event.EventRepository;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.EmailExistsException;
 import com.project.saw.exception.ExceptionMessage;
+import com.project.saw.ticket.Ticket;
+import com.project.saw.ticket.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.*;
@@ -28,11 +33,15 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TicketRepository ticketRepository;
+    private final EventRepository eventRepository;
 
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TicketRepository ticketRepository, EventRepository eventRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.ticketRepository = ticketRepository;
+        this.eventRepository = eventRepository;
 
     }
 
@@ -75,10 +84,21 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
+    @Transactional
     public void delete(Long userId) {
        User userToDelete = userRepository.findById(userId)
                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.USER_NOT_FOUND_EXCEPTION_MESSAGE + userId));
-       userRepository.delete(userToDelete);
 
+       Event eventEntity = userToDelete.getEventEntity();
+       if (eventEntity != null){
+           eventEntity.setUserEntity(null);
+           eventRepository.save(eventEntity);
+       }
+
+       for (Ticket ticket: userToDelete.getTicketEntities()){
+           ticket.setUserEntity(null);
+           ticketRepository.delete(ticket);
+       }
+       userRepository.delete(userToDelete);
     }
 }

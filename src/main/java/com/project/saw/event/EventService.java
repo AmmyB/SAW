@@ -7,15 +7,18 @@ import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.ExceptionMessage;
+import com.project.saw.ticket.Ticket;
+import com.project.saw.ticket.TicketRepository;
+import com.project.saw.user.User;
+import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-
 
 
 @Slf4j
@@ -25,10 +28,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UpdateEvenMapper updateEvenMapper;
 
+    private final TicketRepository ticketRepository;
 
-    public EventService(EventRepository eventRepository, UpdateEvenMapper updateEvenMapper) {
+    private final UserRepository userRepository;
+
+
+    public EventService(EventRepository eventRepository, UpdateEvenMapper updateEvenMapper, TicketRepository ticketRepository, UserRepository userRepository) {
         this.eventRepository = eventRepository;
         this.updateEvenMapper = updateEvenMapper;
+        this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -51,7 +60,7 @@ public class EventService {
                 .endingDate(request.getEndingDate())
                 .description(request.getDescription())
                 .build();
-            eventRepository.save(eventEntity);
+        eventRepository.save(eventEntity);
         return eventEntity;
     }
 
@@ -83,9 +92,28 @@ public class EventService {
 
     }
 
+    @Transactional
     public void delete(Long eventId) {
         Event eventToDelete = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
+
+        User userEntity = eventToDelete.getUserEntity();
+        if ((userEntity != null)) {
+            userEntity.setEventEntity(null);
+            userRepository.save(userEntity);
+        }
+
+        for (Ticket ticket : eventToDelete.getTicketEntities()) {
+            User ticketUser = ticket.getUserEntity();
+            if (ticketUser != null) {
+                ticketUser.getTicketEntities().remove(ticket);
+                userRepository.save(ticketUser);
+            }
+            ticket.setEventEntity(null);
+            ticketRepository.save(ticket);
+        }
+        ticketRepository.deleteAll(eventToDelete.getTicketEntities());
+
         eventRepository.delete(eventToDelete);
 
     }
