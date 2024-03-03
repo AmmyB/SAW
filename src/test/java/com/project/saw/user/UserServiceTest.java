@@ -3,8 +3,11 @@ package com.project.saw.user;
 import com.project.saw.dto.user.CreateUserRequest;
 import com.project.saw.dto.user.UserProjections;
 import com.project.saw.event.Event;
+import com.project.saw.event.EventRepository;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.exception.EmailExistsException;
+import com.project.saw.ticket.Ticket;
+import com.project.saw.ticket.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -33,6 +33,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
+    private TicketRepository ticketRepository;
+    private EventRepository eventRepository;
 
     public static final User USER = new User(7L, "staticUser",
             "Yyy47%", "yxq14@tr.pl", UserRole.PARTICIPANT, null, null);
@@ -44,7 +46,9 @@ class UserServiceTest {
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
-        userService = new UserService(userRepository, passwordEncoder);
+        ticketRepository =  Mockito.mock(TicketRepository.class);
+        eventRepository = Mockito.mock(EventRepository.class);
+        userService = new UserService(userRepository, passwordEncoder,ticketRepository, eventRepository );
         userEntityArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
     }
@@ -117,7 +121,8 @@ class UserServiceTest {
     @Test
     void given_existing_user_when_call_delete_method_with_user_id_then_user_should_be_deleted() {
         //given
-        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        Set<Ticket> tickets = new HashSet<>();
+        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, tickets);
         Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(user)).thenReturn(Optional.empty());
         //when
         userService.delete(user.getId());

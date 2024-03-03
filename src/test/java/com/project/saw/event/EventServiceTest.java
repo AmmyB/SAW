@@ -5,6 +5,9 @@ import com.project.saw.dto.event.UpdateEvenMapper;
 import com.project.saw.dto.event.UpdateEventRequest;
 import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
+import com.project.saw.ticket.Ticket;
+import com.project.saw.ticket.TicketRepository;
+import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,9 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,6 +34,8 @@ class EventServiceTest {
     private EventRepository eventRepository;
     private EventService eventService;
     private UpdateEvenMapper updateEvenMapper;
+    private TicketRepository ticketRepository;
+    private UserRepository userRepository;
 
     private static final Event EVENT = new Event(4L, "Unsound Festival 2023: WEEKLY PASS", "Kraków", 760.00,
             LocalDate.of(2023, 10, 1), LocalDate.of(2024, 10, 8), 50,
@@ -48,7 +51,9 @@ class EventServiceTest {
         eventEntityArgumentCaptor = ArgumentCaptor.forClass(Event.class);
         eventRepository = Mockito.mock(EventRepository.class);
         updateEvenMapper = Mockito.mock(UpdateEvenMapper.class);
-        eventService = new EventService(eventRepository, updateEvenMapper);
+        userRepository = Mockito.mock(UserRepository.class);
+        ticketRepository = Mockito.mock(TicketRepository.class);
+        eventService = new EventService(eventRepository, updateEvenMapper, ticketRepository,userRepository);
     }
 
     @Test
@@ -151,9 +156,10 @@ class EventServiceTest {
     @Test
     void given_existing_event_when_call_delete_method_with_event_id_then_event_should_be_deleted() {
         //given
+        Set<Ticket> tickets = new HashSet<>();
         Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
-                LocalDate.of(2005, 5, 6), 30, "Test description", null, null);
-        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());
+                LocalDate.of(2005, 5, 6), 30, "Test description", null, tickets);
+        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());;
         //when
         eventService.delete(event.getId());
         //then
