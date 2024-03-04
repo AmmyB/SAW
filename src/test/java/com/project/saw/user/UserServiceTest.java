@@ -119,16 +119,30 @@ class UserServiceTest {
     }
 
     @Test
-    void given_existing_user_when_call_delete_method_with_user_id_then_user_should_be_deleted() {
+    void given_existing_user_when_call_delete_method_with_user_id_then_user_and_all_related_info_should_be_deleted() {
         //given
+        Event event = new Event(1L, "Test Event", "Location", 10.00,LocalDate.of(2024, 10, 2),
+                LocalDate.of(2024, 10, 12),50, "Description", null, null);
         Set<Ticket> tickets = new HashSet<>();
-        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, tickets);
+        Ticket ticket = new Ticket();
+        ticket.setEventEntity(event);
+        User user = new User(2L, "userToDelete", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, event, tickets);
+        ticket.setUserEntity(user);
+        tickets.add(ticket);
         Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(user)).thenReturn(Optional.empty());
-        //when
         userService.delete(user.getId());
         //then
         Mockito.verify(userRepository, Mockito.times(1)).delete(user);
         assertThat(userRepository.findById(user.getId()).isEmpty());
+        // Verify clearing user from event
+        Mockito.verify(eventRepository, Mockito.times(1)).save(event);
+        assertThat(event.getUserEntity()).isNull();
+        //Verift clearing user from tickets
+        for (Ticket tickett : tickets){
+            Mockito.verify(ticketRepository, Mockito.times(1)).delete(tickett);
+        }
+        // Verify deleting tickets associated with user
+        Mockito.verify(ticketRepository, Mockito.times(tickets.size())).delete(any());
     }
 
     @Test
