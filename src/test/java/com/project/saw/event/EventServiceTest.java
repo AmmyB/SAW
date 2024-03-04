@@ -7,7 +7,9 @@ import com.project.saw.dto.event.UpdateEventResponse;
 import com.project.saw.exception.DuplicateException;
 import com.project.saw.ticket.Ticket;
 import com.project.saw.ticket.TicketRepository;
+import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
+import com.project.saw.user.UserRole;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -154,17 +157,37 @@ class EventServiceTest {
     }
 
     @Test
-    void given_existing_event_when_call_delete_method_with_event_id_then_event_should_be_deleted() {
+    void given_existing_event_with_user_and_tickets_when_call_delete_method_with_event_id_then_event_and_all_related_info_should_be_deleted() {
         //given
-        Set<Ticket> tickets = new HashSet<>();
+        User user = new User(2L, "user", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
         Event event = new Event(1L, "Test", "Kraków", 5.00, LocalDate.of(2005, 5, 5),
-                LocalDate.of(2005, 5, 6), 30, "Test description", null, tickets);
-        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());;
+                LocalDate.of(2005, 5, 6), 30, "Test description", user, null);
+
+        Set<Ticket> tickets = new HashSet<>();
+        Ticket ticket1 = new Ticket(1L, LocalDateTime.now(), UUID.randomUUID(), event, user);
+        Ticket ticket2 = new Ticket(2L, LocalDateTime.now(), UUID.randomUUID(), event, user);
+        ticket1.setUserEntity(user);
+        ticket1.setEventEntity(event);
+        ticket2.setUserEntity(user);
+        ticket2.setEventEntity(event);
+
+        tickets.add(ticket1);
+        tickets.add(ticket2);
+        user.setTicketEntities(tickets);
+        event.setTicketEntities(tickets);
+
+        Mockito.when(eventRepository.findById(any())).thenReturn(Optional.of(event)).thenReturn(Optional.empty());
+
         //when
         eventService.delete(event.getId());
+
         //then
+        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+        Mockito.verify(ticketRepository, Mockito.times(1)).save(ticket1);
+        Mockito.verify(ticketRepository, Mockito.times(1)).save(ticket2);
+        Mockito.verify(ticketRepository, Mockito.times(1)).deleteAll(tickets);
         Mockito.verify(eventRepository, Mockito.times(1)).delete(event);
-        assertThat(eventRepository.findById(event.getId()).isEmpty());
+        assertThat(eventRepository.findById(event.getId())).isEmpty();
     }
 
     @Test

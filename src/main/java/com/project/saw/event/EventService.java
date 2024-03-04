@@ -98,25 +98,21 @@ public class EventService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
         User userEntity = eventToDelete.getUserEntity();
-        if ((userEntity != null)) {
+        if (userEntity != null) {
             userEntity.setEventEntity(null);
             userRepository.save(userEntity);
         }
 
         for (Ticket ticket : eventToDelete.getTicketEntities()) {
-            User ticketUser = ticket.getUserEntity();
-            if (ticketUser != null) {
-                ticketUser.getTicketEntities().remove(ticket);
-                userRepository.save(ticketUser);
-            }
+            ticket.setUserEntity(null);
             ticket.setEventEntity(null);
             ticketRepository.save(ticket);
         }
         ticketRepository.deleteAll(eventToDelete.getTicketEntities());
 
         eventRepository.delete(eventToDelete);
-
     }
+
 
     public List<Event> searchEvents(String query) {
         return eventRepository.searchByTitleLikeIgnoreCase(query);
