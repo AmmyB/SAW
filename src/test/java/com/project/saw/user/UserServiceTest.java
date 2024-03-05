@@ -14,10 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.data.domain.*;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
@@ -157,4 +160,37 @@ class UserServiceTest {
         var actualMessage = exception.getMessage();
         Assertions.assertEquals(expectedMessage,actualMessage);
     }
+
+    @Test
+    void given_existing_user_when_call_load_user_by_username_method_then_user_should_be_loaded(){
+        //given
+        String username = "testUser";
+        String encodedPassword = "encodedPassword";
+        UserRole role = UserRole.PARTICIPANT;
+        User user = new User(1L, username, encodedPassword, "test@example.com", role, null, null);
+        Mockito.when(userRepository.findByUserNameIgnoreCase(username)).thenReturn(Optional.of(user));
+        //when
+        UserDetails userDetails = userService.loadUserByUsername(username);
+        //then
+        Assertions.assertEquals(username, userDetails.getUsername());
+        Assertions.assertEquals(encodedPassword, userDetails.getPassword());
+        Assertions.assertEquals(1, userDetails.getAuthorities().size());
+        Assertions.assertEquals(role.name(), userDetails.getAuthorities().iterator().next().getAuthority());
+    }
+
+    @Test
+    void given_not_existing_user_when_call_load_user_by_username_method_then_method_throws_exception() {
+        //given
+        User user = new User(2L, "UsertoCheck", "qwe", "vvv@v.pl", UserRole.PARTICIPANT, null, null);
+        Mockito.when(userRepository.findByUserNameIgnoreCase(user.getUserName())).thenReturn(Optional.empty());
+        //when
+        var exception = Assertions.assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(user.getUserName()));
+        //then
+        var expectedMessage =  String.format("User not found with username: " +  user.getUserName());
+        var actualMessage = exception.getMessage();
+        Assertions.assertEquals(expectedMessage,actualMessage);
+    }
+
+
+
 }
