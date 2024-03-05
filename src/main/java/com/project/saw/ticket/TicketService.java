@@ -10,7 +10,6 @@ import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -28,14 +27,14 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
 
-    @Autowired
     private EventRepository eventRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
-    public TicketService(TicketRepository ticketRepository) {
+    public TicketService(TicketRepository ticketRepository, EventRepository eventRepository, UserRepository userRepository) {
         this.ticketRepository = ticketRepository;
+        this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
     }
 
     public Page<Ticket> getTicketListforEvent(Pageable pageable, Long eventId) {
@@ -68,13 +67,19 @@ public class TicketService {
     @Transactional
     public void deleteTicket(Long ticketId){
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(()-> new EntityNotFoundException(ExceptionMessage.TICKET_NOT_FOUND_EXCEPTION_MESSAGE + ticketId));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.TICKET_NOT_FOUND_EXCEPTION_MESSAGE + ticketId));
+
         User user = ticket.getUserEntity();
-        user.getTicketEntities().remove(ticket);
+        if (user.getTicketEntities() != null) {
+            user.getTicketEntities().remove(ticket);
+        }
 
         Event event = ticket.getEventEntity();
-        event.getTicketEntities().remove(ticket);
+        if (event != null && event.getTicketEntities() != null) {
+            event.getTicketEntities().remove(ticket);
+        }
 
         ticketRepository.delete(ticket);
     }
+
 }

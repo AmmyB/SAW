@@ -459,13 +459,13 @@ components:
           format: int64
         userName:
           type: string
-        eventEntity:
-          $ref: '#/components/schemas/Event'
         ticketEntities:
           uniqueItems: true
           type: array
           items:
             $ref: '#/components/schemas/Ticket'
+        eventEntity:
+          $ref: '#/components/schemas/Event'
         userRole:
           type: string
           enum:
@@ -520,12 +520,12 @@ components:
           $ref: '#/components/schemas/User'
         eventEntity:
           $ref: '#/components/schemas/Event'
-        barcode:
-          type: string
-          format: uuid
         purchaseDate:
           type: string
           format: date-time
+        barcode:
+          type: string
+          format: uuid
     CollectionModelEntityModelTicket:
       type: object
       properties:
