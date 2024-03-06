@@ -51,11 +51,11 @@ public class TicketService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userRepository.findByUserNameIgnoreCase(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
+
+        User user = userRepository.findByUserNameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE + username));
 
         if (event.getSeatingCapacity() > 0) {
             event.setSeatingCapacity(event.getSeatingCapacity() - 1);
@@ -68,7 +68,7 @@ public class TicketService {
                     .build();
             return ticketRepository.save(ticket);
         } else {
-            throw new NoAvailableSeatsException(ExceptionMessage.SEATS_NO_AVAILABLE_EXCEPTION_MESSAGE);
+            throw new NoAvailableSeatsException(ExceptionMessage.SEATS_NO_AVAILABLE_EXCEPTION_MESSAGE + event.getTitle());
         }
     }
 

@@ -3,11 +3,11 @@ package com.project.saw.ticket;
 import com.project.saw.dto.ticket.TicketProjections;
 import com.project.saw.event.Event;
 import com.project.saw.event.EventRepository;
+import com.project.saw.exception.NoAvailableSeatsException;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
 import com.project.saw.user.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,7 +83,7 @@ class TicketServiceTest {
     }
 
     @Test
-    void given_eventId_when_call_createTicket_method_then_new_ticket_should_be_created() {
+    void given_eventId_when_call_createTicket_method_then_new_ticket_should_be_created() throws NoAvailableSeatsException {
         // given
         Mockito.when(authentication.getName()).thenReturn("username");
         Mockito.when(userRepository.findByUserNameIgnoreCase("username")).thenReturn(Optional.of(USER));
@@ -92,6 +93,67 @@ class TicketServiceTest {
         Ticket result = ticketService.createTicket(EVENT.getId());
         // then
         assertEquals(TICKET, result);
+    }
+
+    @Test
+    void given_invalidEventId_when_call_createTicket_then_method_throws_EntityNotFoundException_and_should_not_create_a_ticket() {
+        // given
+        Long invalidEventId = 100L;
+        User user = new User();
+        user.setUserName("username");
+        Mockito.when(authentication.getName()).thenReturn(user.getUserName());
+        Mockito.when(userRepository.findByUserNameIgnoreCase(user.getUserName())).thenReturn(Optional.of(user));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Mockito.when(eventRepository.findById(invalidEventId)).thenReturn(Optional.empty());
+        // when
+        var exception = assertThrows(EntityNotFoundException.class, () -> ticketService.createTicket(invalidEventId));
+        //then
+        Mockito.verify(ticketRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("Event not found with id: " + invalidEventId);
+        var actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void given_noAvailableSeats_when_call_createTicket_then_method_throws_NoAvailableSeatsException_and_should_not_create_a_ticket() {
+        // given
+        Long eventId = 1L;
+        Event event = new Event();
+        event.setTitle("title test");
+        event.setSeatingCapacity(0);
+        User user = new User();
+        user.setUserName("username");
+        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        Mockito.when(authentication.getName()).thenReturn(user.getUserName());
+        Mockito.when(userRepository.findByUserNameIgnoreCase(user.getUserName())).thenReturn(Optional.of(user));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // when
+        var exception = assertThrows(NoAvailableSeatsException.class, () -> ticketService.createTicket(eventId));
+        //then
+        Mockito.verify(ticketRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("No available seats for this event: " + event.getTitle());
+        var actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void given_non_existent_user_when_call_createTicket_then_method_throws_UsernameNotFoundException_and_should_not_create_a_ticket() {
+        // given
+        Long eventId = 1L;
+        Event event = new Event();
+        event.setSeatingCapacity(1);
+        String username = "username";
+        Mockito.when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        Mockito.when(authentication.getName()).thenReturn(username);
+        Mockito.when(userRepository.findByUserNameIgnoreCase(username)).thenReturn(Optional.empty());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // when
+        var exception = assertThrows(UsernameNotFoundException.class, () -> ticketService.createTicket(eventId));
+        //then
+        Mockito.verify(ticketRepository, Mockito.never()).save(any());
+        var expectedMessage = String.format("User not found with username: " + username);
+        var actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

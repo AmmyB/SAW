@@ -459,13 +459,13 @@ components:
           format: int64
         userName:
           type: string
+        eventEntity:
+          $ref: '#/components/schemas/Event'
         ticketEntities:
           uniqueItems: true
           type: array
           items:
             $ref: '#/components/schemas/Ticket'
-        eventEntity:
-          $ref: '#/components/schemas/Event'
         userRole:
           type: string
           enum:
