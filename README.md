@@ -28,9 +28,23 @@ The project allows event organizers to add, remove and edit event content and en
 
 </div>
 
-## Requirements
+## Technologies currently used
 
-**Java 11** or any higher version
+* **Spring Boot**
+* **Spring Data JPA**
+* **Spring Web**
+* **Spring Security**
+* **Springdoc OpenAPI**
+* **Mockito**
+* **Lombok**
+* **Hibernate Validator**
+* **Spring Boot Actuator**
+* **Spring Boot Hateoas**
+* **AssertJ**
+* **MySQL Connector**
+* **Spring Boot Starter Test**
+* **ModelMapper**
+* **MapStruct**
 
 ## Authors
 
