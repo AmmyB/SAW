@@ -2,6 +2,7 @@ package com.project.saw.ticket;
 
 
 import com.project.saw.dto.ticket.TicketProjections;
+import com.project.saw.exception.NoAvailableSeatsException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class TicketController {
 
     @Operation(summary = "Create a new ticket", description = "All parameters are required. Method returns a new ticket object for the given user and event")
     @PostMapping("{eventId}")
-    public ResponseEntity<Ticket> createTicket(@PathVariable @Valid Long eventId){
+    public ResponseEntity<Ticket> createTicket(@PathVariable @Valid Long eventId) throws NoAvailableSeatsException {
         log.info("Creating a ticket for an event: {}", eventId);
         Ticket createTicket = ticketService.createTicket(eventId);
         createTicket.add(linkTo(methodOn(TicketController.class).createTicket(eventId)).withSelfRel());
