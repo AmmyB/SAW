@@ -5,6 +5,7 @@ import com.project.saw.dto.ticket.TicketProjections;
 import com.project.saw.event.Event;
 import com.project.saw.event.EventRepository;
 import com.project.saw.exception.ExceptionMessage;
+import com.project.saw.exception.NoAvailableSeatsException;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,22 +47,29 @@ public class TicketService {
        return ticketRepository.findTicketById(ticketId);
     }
 
-    public Ticket createTicket(Long eventId){
+    public Ticket createTicket(Long eventId) throws NoAvailableSeatsException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userRepository.findByUserNameIgnoreCase(username)
-                .orElseThrow(()-> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));
 
-        Ticket ticket = Ticket.builder()
-                .userEntity(user)
-                .eventEntity(event)
-                .purchaseDate(LocalDateTime.now())
-                .build();
-        return ticketRepository.save(ticket);
+        if (event.getSeatingCapacity() > 0) {
+            event.setSeatingCapacity(event.getSeatingCapacity() - 1);
+            eventRepository.save(event);
+
+            Ticket ticket = Ticket.builder()
+                    .userEntity(user)
+                    .eventEntity(event)
+                    .purchaseDate(LocalDateTime.now())
+                    .build();
+            return ticketRepository.save(ticket);
+        } else {
+            throw new NoAvailableSeatsException(ExceptionMessage.SEATS_NO_AVAILABLE_EXCEPTION_MESSAGE);
+        }
     }
 
     @Transactional
