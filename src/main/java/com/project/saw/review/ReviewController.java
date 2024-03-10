@@ -33,14 +33,23 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @Operation(summary = "Get Review List for Event", description = "Returns a list of all reviews for given event")
+    @Operation(summary = "Get Reviews for Event", description = "Returns a list of all reviews for given event")
     @GetMapping("/{eventId}/reviews")
-    public ResponseEntity<CollectionModel<EntityModel<Review>>> getReviewListForEvent(Pageable pageable, @PathVariable @Valid Long eventId){
+    public ResponseEntity<CollectionModel<EntityModel<Review>>> getReviewsForEvent(Pageable pageable, @PathVariable @Valid Long eventId){
         log.info("Fetching list of reviews for a given event");
         Page<Review> allReviews = reviewService.getReviewsForEvent(pageable,eventId);
-        Link link = linkTo(methodOn(ReviewController.class).getReviewListForEvent(pageable,eventId)).withSelfRel();
+        Link link = linkTo(methodOn(ReviewController.class).getReviewsForEvent(pageable,eventId)).withSelfRel();
         PagedModel<EntityModel<Review>> pagedModel = reviewPagedResourcesAssembler.toModel(allReviews,reviewModelAssembler);
         return ResponseEntity.ok(pagedModel);
+    }
+
+    @Operation(summary = "Create a new review", description = "All parameters are required. Method returns a new review object")
+    @PostMapping("{eventId}")
+    public ResponseEntity<Review> createReview(@PathVariable @Valid Long eventId, @RequestBody @Valid String title, String content, int rating) {
+        log.info("Creating a review: {} with content {}", title, content);
+        Review createReview = reviewService.createReview(eventId,title,content,rating);
+        createReview.add(linkTo(methodOn(ReviewController.class).createReview(eventId,title,content,rating)).withSelfRel());
+        return ResponseEntity.ok(createReview);
     }
 
     @Operation(summary = "Delete an existing review and its associated data.", description = "Review id is required for deletion. " +

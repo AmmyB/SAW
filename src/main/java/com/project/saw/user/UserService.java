@@ -9,7 +9,7 @@ import com.project.saw.exception.ExceptionMessage;
 import com.project.saw.ticket.Ticket;
 import com.project.saw.ticket.TicketRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.*;

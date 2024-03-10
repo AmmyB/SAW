@@ -12,7 +12,7 @@ import com.project.saw.ticket.TicketRepository;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
