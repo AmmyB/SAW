@@ -7,9 +7,10 @@ The website offers several basic functionalities, such as:
 * :fireworks: **Events** - Create/Update/Search/Delete event
 * :ticket: **Tickets** - Signing up for the event
 * :no_entry: **Authorization** - Access to resource data depends on rank
-
-In the future:
 * :speech_balloon: **Comments** - Adding comments by users
+
+Next to be implemented:
+* :musical_note: **Spotify** - Adding Spotify
 * :e-mail: **Messages** - Sending notifications
 * :closed_lock_with_key: **Login** - Logging in via social media
 * :credit_card: **Payments** - Adding test payments
