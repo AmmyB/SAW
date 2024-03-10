@@ -16,4 +16,6 @@ public class ExceptionMessage {
     public static final String SEATS_NO_AVAILABLE_EXCEPTION_MESSAGE = "No available seats for this event: ";
 
     public static final String TICKET_NOT_FOUND_EXCEPTION_MESSAGE = "Ticket not found with id: ";
+
+    public static final String REVIEW_NOT_FOUND_EXCEPTION_MESSAGE = "Review not found with id: ";
 }

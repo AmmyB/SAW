@@ -8,6 +8,7 @@ import com.project.saw.exception.ExceptionMessage;
 import com.project.saw.exception.NoAvailableSeatsException;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
+import com.project.saw.utils.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,8 @@ import java.time.LocalDateTime;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
-
-    private EventRepository eventRepository;
-
-    private UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     public TicketService(TicketRepository ticketRepository, EventRepository eventRepository, UserRepository userRepository) {
         this.ticketRepository = ticketRepository;
@@ -47,9 +46,9 @@ public class TicketService {
        return ticketRepository.findTicketById(ticketId);
     }
 
+    @Transactional
     public Ticket createTicket(Long eventId) throws NoAvailableSeatsException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = SecurityUtils.getAuthentication().getName();
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.EVEN_NOT_FOUND_ERROR_MESSAGE + eventId));

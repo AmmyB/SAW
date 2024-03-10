@@ -12,10 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -44,5 +41,15 @@ public class ReviewController {
         Link link = linkTo(methodOn(ReviewController.class).getReviewListForEvent(pageable,eventId)).withSelfRel();
         PagedModel<EntityModel<Review>> pagedModel = reviewPagedResourcesAssembler.toModel(allReviews,reviewModelAssembler);
         return ResponseEntity.ok(pagedModel);
+    }
+
+    @Operation(summary = "Delete an existing review and its associated data.", description = "Review id is required for deletion. " +
+            "The method removes the review and its associated data: " +
+            "deletes the review information in the Users and Events tables.")
+    @DeleteMapping("{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId){
+        log.info("Deleting a review with the id: {}", reviewId);
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
     }
 }
