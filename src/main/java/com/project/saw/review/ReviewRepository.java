@@ -14,5 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("SELECT r FROM Review r WHERE r.event.id = :eventId order by r.createdAt DESC")
     Page<Review> sortedListOfReviewForEvent(Pageable pageable, Long eventId);
 
+    @Transactional(readOnly = true)
+    @Query("SELECT r FROM Review r WHERE r.user.id = :userId order by r.createdAt DESC")
+    Page<Review> sortedListOfUserReviews(Pageable pageable, Long userId);
 
 }

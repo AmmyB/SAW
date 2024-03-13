@@ -34,6 +34,10 @@ public class ReviewService {
         return reviewRepository.sortedListOfReviewForEvent(pageable, eventId);
     }
 
+    public Page<Review> getUserReviews(Pageable pageable, Long userId) {
+        return reviewRepository.sortedListOfUserReviews(pageable, userId);
+    }
+
     @Transactional
     public Review createReview(Long eventId, String title, String content, int rating) {
         String username = SecurityUtils.getAuthentication().getName();
