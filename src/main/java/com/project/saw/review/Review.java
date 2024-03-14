@@ -3,9 +3,7 @@ package com.project.saw.review;
 import com.project.saw.event.Event;
 import com.project.saw.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,8 +31,9 @@ public class Review extends RepresentationModel<Review> {
     @Size(max = 100, message = "Content length must be less than or equal to 100 characters")
     private String content;
     @NotNull(message = "Rating is mandatory")
-    @Size(min = 1 , max = 5, message = "Rating must be from 1 to 5")
-    private int rating;
+    @Min(value = 1, message = "Rating must be at least 1")
+    @Max(value = 5, message = "Rating must not exceed 5")
+    private Integer rating;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

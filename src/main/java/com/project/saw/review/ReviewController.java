@@ -1,5 +1,6 @@
 package com.project.saw.review;
 
+import com.project.saw.dto.review.CreateReviewRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,8 @@ public class ReviewController {
     @Autowired
     private PagedResourcesAssembler<Review> reviewPagedResourcesAssembler;
 
-    private ReviewController(ReviewService reviewService) {
+
+    public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
@@ -56,10 +58,10 @@ public class ReviewController {
 
     @Operation(summary = "Create a new review", description = "All parameters are required. Method returns a new review object")
     @PostMapping("{eventId}")
-    public ResponseEntity<Review> createReview(@PathVariable @Valid Long eventId, @RequestBody @Valid String title, String content, int rating) {
-        log.info("Creating a review: {} with content {}", title, content);
-        Review createReview = reviewService.createReview(eventId, title, content, rating);
-        createReview.add(linkTo(methodOn(ReviewController.class).createReview(eventId, title, content, rating)).withSelfRel());
+    public ResponseEntity<Review> createReview(@PathVariable @Valid Long eventId, @RequestBody @Valid CreateReviewRequest createReviewRequest) {
+        log.info("Creating a review: {} with content {}", createReviewRequest.getTitle(), createReviewRequest.getContent());
+        Review createReview = reviewService.createReview(eventId, createReviewRequest);
+        createReview.add(linkTo(methodOn(ReviewController.class).createReview(eventId, createReviewRequest)).withSelfRel());
         return ResponseEntity.ok(createReview);
     }
 

@@ -84,22 +84,11 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: content
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: rating
-        in: query
-        required: true
-        schema:
-          type: integer
-          format: int32
       requestBody:
         content:
           application/json:
             schema:
-              type: string
+              $ref: '#/components/schemas/CreateReviewRequest'
         required: true
       responses:
         "200":
@@ -257,6 +246,32 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CollectionModelEntityModelTicket'
+  /review/{userId}/reviews:
+    get:
+      tags:
+      - review-controller
+      summary: Get User Review
+      description: Returns a list of all reviews for given user ID
+      operationId: getAllUserReview
+      parameters:
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/Pageable'
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CollectionModelEntityModelReview'
   /review/{eventId}/reviews:
     get:
       tags:
@@ -445,6 +460,24 @@ components:
             $ref: '#/components/schemas/Ticket'
         _links:
           $ref: '#/components/schemas/Links'
+    CreateReviewRequest:
+      required:
+      - content
+      - rating
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          maxLength: 100
+          minLength: 0
+          type: string
+        rating:
+          maximum: 5
+          minimum: 1
+          type: integer
+          format: int32
     Review:
       required:
       - content
@@ -570,6 +603,8 @@ components:
         id:
           type: integer
           format: int64
+        userName:
+          type: string
         ticketEntities:
           uniqueItems: true
           type: array
@@ -583,8 +618,6 @@ components:
           - PARTICIPANT
           - ORGANIZER
         email:
-          type: string
-        userName:
           type: string
         ticketEntity:
           uniqueItems: true
@@ -633,12 +666,12 @@ components:
           $ref: '#/components/schemas/User'
         eventEntity:
           $ref: '#/components/schemas/Event'
-        barcode:
-          type: string
-          format: uuid
         purchaseDate:
           type: string
           format: date-time
+        barcode:
+          type: string
+          format: uuid
     CollectionModelEntityModelTicket:
       type: object
       properties:

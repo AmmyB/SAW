@@ -161,10 +161,8 @@ class TicketServiceTest {
         // given
         Ticket ticket = new Ticket(2L, LocalDateTime.now(), UUID.randomUUID(), EVENT, USER);
         Mockito.when(ticketRepository.findById(ticket.getId())).thenReturn(Optional.of(ticket));
-
         // when
         ticketService.deleteTicket(ticket.getId());
-
         // then
         Mockito.verify(ticketRepository, Mockito.times(1)).findById(ticket.getId());
         Mockito.verify(ticketRepository, Mockito.times(1)).delete(ticket);
