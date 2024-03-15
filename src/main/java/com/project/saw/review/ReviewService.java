@@ -48,6 +48,10 @@ public class ReviewService {
         User user = userRepository.findByUserNameIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USERNAME_NOT_FOUND_EXCEPTION_MESSAGE + username));
 
+        if (createReviewRequest == null) {
+            throw new IllegalArgumentException("Request cannot be null");
+        }
+
         if (createReviewRequest.getContent() == null || createReviewRequest.getContent().isEmpty()) {
             throw new IllegalArgumentException("Content cannot be null or empty");
         }
