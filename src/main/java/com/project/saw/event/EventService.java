@@ -58,6 +58,7 @@ public class EventService {
                 .price(request.getPrice())
                 .startingDate(request.getStartingDate())
                 .endingDate(request.getEndingDate())
+                .seatingCapacity(request.getSeatingCapacity())
                 .description(request.getDescription())
                 .build();
         eventRepository.save(eventEntity);

@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 
-class EventServiceTest {
+class EventServiceUnitTest {
 
     private EventRepository eventRepository;
     private EventService eventService;

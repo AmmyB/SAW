@@ -29,7 +29,7 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 
 
-class UserServiceTest {
+class UserServiceUnitTest {
 
 
     private UserRepository userRepository;

@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 
-class TicketServiceTest {
+class TicketServiceUnitTest {
 
     private TicketRepository ticketRepository;
     private TicketService ticketService;

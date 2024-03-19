@@ -12,7 +12,6 @@ import com.project.saw.event.Event;
 import com.project.saw.event.EventRepository;
 import com.project.saw.user.User;
 import com.project.saw.user.UserRepository;
-import com.project.saw.utils.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-class ReviewServiceTest {
+class ReviewServiceUnitTest {
 
     private ReviewService reviewService;
 
