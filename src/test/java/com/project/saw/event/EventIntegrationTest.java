@@ -8,11 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +41,7 @@ class EventIntegrationTest {
 
     @Test
     @DisplayName("Should successfully create an event")
-    public void testCreateEventAfterUserLogin() throws Exception {
+    void testCreateEventAfterUserLogin() throws Exception {
         // Given
         String username = "organizatortest3";
         String password = "251512251";
@@ -63,4 +71,26 @@ class EventIntegrationTest {
 
         eventRepository.delete(responseBody);
     }
+
+    @Test
+    @DisplayName("Should return a list of event with success")
+    @Transactional
+    void testGetEventList() {
+        // When
+        ResponseEntity<CollectionModel<EntityModel<Event>>> response = testRestTemplate.exchange(
+                "http://localhost:" + port + "/event",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<CollectionModel<EntityModel<Event>>>() {});
+        // Then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<Event> eventsFromRepository = eventRepository.sortedListOfEvents(Pageable.unpaged()).getContent();
+        List<Event> eventsFromResponse = response.getBody().getContent().stream()
+                .map(EntityModel::getContent)
+                .collect(Collectors.toList());
+        assertEquals(eventsFromRepository, eventsFromResponse);
+
+    }
+
 }
